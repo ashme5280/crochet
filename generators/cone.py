@@ -56,12 +56,12 @@ def calculate_cone_metrics(height_rounds, total_stitch_count, weight_key, hook_s
 @router.get("/")
 def get_cone_pattern(
     yarn_weight: YarnWeight = Query(YarnWeight.dk, description="Select your yarn weight category"),
-    hook_size_mm: float = Query(3.0, gt=0),
+    hook_size_mm: float = Query(3., gt=0),
     initial_stitches: int = Query(6, gt=0),
     target_stitches: int | None = Query(None, gt=0, description="Target maximum stitches around the cone base"),
     max_diameter_inches: float | None = Query(None, gt=0, description="Target finished base diameter in inches"),
     max_diameter_cm: float | None = Query(None, gt=0, description="Target finished base diameter in centimeters"),
-    height_rounds: int | None = Query(None, gt=0, description="Number of gradient taper increase rounds"),
+    height_rounds: int | None = Query(None, gt=0, description="Number of taper rows"),
     max_height_inches: float | None = Query(None, gt=0, description="Target finished height in inches"),
     max_height_cm: float | None = Query(None, gt=0, description="Target finished height in centimeters")
 ):
@@ -138,48 +138,36 @@ def get_cone_pattern(
     })
     total_stitch_count += current_stitches
 
-    # 2. Round 2: All Increases
-    current_round += 1
-    current_stitches += initial_stitches
-    instructions.append({
-        "round": current_round, "phase": "increase", "stitches_in_round": current_stitches,
-        "instruction": f"Rnd {current_round}: [inc] x {initial_stitches}. ({current_stitches} sts)"
-    })
-    total_stitch_count += current_stitches
+    # 2. Gradual Single-Stitch Taper Generation
+    # We want to grow from initial_stitches to target_stitches smoothly across `height_rounds`.
+    total_stitches_to_add = target_stitches - initial_stitches
 
-    # 3. Gradual Taper Increase Phase spread across height_rounds
-    # We want to reach target_stitches across exactly `height_rounds` steps.
-    rounds_left = height_rounds - 1  # we already did round 2
-    if rounds_left < 1:
-        rounds_left = 1
+    if total_stitches_to_add > 0:
+        # Calculate how many rounds each single-stitch increase should take
+        rounds_per_increase = height_rounds / total_stitches_to_add
 
-    # Calculate how many stitches total need to be added after round 2
-    stitches_to_add_total = target_stitches - current_stitches
+        next_increase_at_round = 1.0 + rounds_per_increase
 
-    # Generate the gradient taper rows
-    for i in range(rounds_left):
-        if current_stitches >= target_stitches:
-            break
+        for r in range(2, height_rounds + 1):
+            current_round = r
 
-        current_round += 1
+            # Check if this is an increase round based on our distribution frequency
+            if r >= round(next_increase_at_round) and current_stitches < target_stitches:
+                current_stitches += 1
+                next_increase_at_round += rounds_per_increase
+                phase = "increase"
+                instruction = f"Rnd {current_round}: [inc], sc in remaining sts. ({current_stitches} sts)"
+            else:
+                phase = "even"
+                instruction = f"Rnd {current_round}: sc in each st around. ({current_stitches} sts)"
 
-        # Distribute increases evenly or step by step
-        # To keep standard amigurumi syntax [sc in next X, inc] x initial_stitches:
-        # Each increase round adds `initial_stitches` (6) stitches total.
-        # If we need more fine-grained spreading, we can add per round:
-        current_stitches += initial_stitches
-        if current_stitches > target_stitches:
-            current_stitches = target_stitches
+            instructions.append({
+                "round": current_round, "phase": phase, "stitches_in_round": current_stitches,
+                "instruction": instruction
+            })
+            total_stitch_count += current_stitches
 
-        step_count = (current_stitches // initial_stitches) - 1
-
-        instructions.append({
-            "round": current_round, "phase": "increase", "stitches_in_round": current_stitches,
-            "instruction": f"Rnd {current_round}: [sc in next {step_count} sts, inc] x {initial_stitches}. ({current_stitches} sts)"
-        })
-        total_stitch_count += current_stitches
-
-    # 4. Final Base Rim Round
+    # 3. Final Base Rim Round
     current_round += 1
     instructions.append({
         "round": current_round, "phase": "base_rim", "stitches_in_round": current_stitches,
