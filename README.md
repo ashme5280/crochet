@@ -10,13 +10,33 @@ A FastAPI-based backend service that automatically generates precise, round-by-r
 * **Traditional Amigurumi Math:** Adheres to standard crochet rules (magic rings, all-increase start rounds, gradual taper distributions, and proper closing decrease caps).
 * **Yarn Weight Categorization:** Built-in enum support for weights ranging from Fingering to Super Bulky.
 
-## Project Structure
+## Frontend Web Interface
 
-```text
+The project includes a lightweight, responsive single-page web interface (`frontend/index.html`) that allows users to interactively generate amigurumi patterns, switch between unit systems, and customize shapes in real-time.
+
+### Features
+* **Unit System Toggle:** Seamlessly switch between Imperial (**Inches**) and Metric (**Centimeters**).
+* **Shape Selector:** Choose between **Sphere**, **Cylinder** (with open/closed ends configuration), and **Cone** (with Narrow, Medium, and Wide taper styles).
+* **Dynamic Form Fields:** Form inputs update dynamically depending on the selected shape and measurement system.
+* **Instant Metrics Card:** Displays total rounds, precise finished physical dimensions, and yarn estimates in both **yards** and **meters**.
+* **Clean Instructions:** Renders a step-by-step, easy-to-read crochet pattern list.
+
+### Running the Frontend Locally
+1. Start your FastAPI backend server:
+   ```bash
+   uvicorn main:app --reload
+
+amigurumi-generator/
+│
+├── frontend/
+│   └── index.html          # Responsive single-page web UI (Unit toggles, shape selectors, live metrics & instructions)
+│
 ├── generators/
-│   ├── __init__.py
-│   ├── sphere.py      # Sphere pattern & volumetric logic
-│   ├── cylinder.py    # Cylinder pattern & height/tube logic
-│   └── cone.py        # Cone pattern & smooth single-stitch taper logic
-├── main.py            # FastAPI application entry point
-└── requirements.txt   # Project dependencies
+│   ├── __init__.py         # Package initialization
+│   ├── sphere.py           # Sphere geometry, yarn metrics, and pattern generator route
+│   ├── cylinder.py         # Cylinder geometry, open/closed ends configuration, and route
+│   └── cone.py             # Cone geometry, narrow/medium/wide taper styles, dynamic heights, and route
+│
+├── main.py                 # FastAPI application entry point wiring routers and CORS
+├── requirements.txt        # Project dependencies (FastAPI, Uvicorn, etc.)
+└── README.md               # Project documentation including API endpoints and frontend usage
