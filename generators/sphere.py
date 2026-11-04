@@ -55,6 +55,7 @@ def calculate_sphere_metrics(instructions, total_stitch_count, weight_key, hook_
     base_inches_per_st = YARN_INCHES_PER_STITCH[weight_key]
     hook_adjusted_inches_per_st = base_inches_per_st * (hook_size_mm / 3.5)
     total_yarn_yards = round((total_stitch_count * hook_adjusted_inches_per_st / 36) * 1.15, 1)
+    total_yarn_meters = round(total_yarn_yards * 0.9144, 1)
 
     # Calculate weight in grams and ounces
     grams_per_yard = YARN_GRAMS_PER_YARD.get(weight_key, 4.5)
@@ -68,6 +69,7 @@ def calculate_sphere_metrics(instructions, total_stitch_count, weight_key, hook_
         "volume_cubic_cm": round(volume_cubic_cm, 1),
         "total_stitches_worked": total_stitch_count,
         "estimated_yarn_yards": total_yarn_yards,
+        "estimated_yarn_meters": total_yarn_meters,
         "estimated_weight_grams": round(total_grams, 1),
         "estimated_weight_oz": round(total_ounces, 1)
     }

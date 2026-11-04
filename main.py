@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from generators import sphere, cylinder, cone
 
 app = FastAPI(
@@ -12,6 +14,9 @@ app.include_router(sphere.router)
 app.include_router(cylinder.router)
 app.include_router(cone.router)
 
+# Mount your frontend directory
+app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
+
 @app.get("/")
-def root():
-    return {"message": "Welcome to the Amigurumi Generator API! Visit /docs to test all shapes."}
+def read_index():
+    return FileResponse("frontend/index.html")

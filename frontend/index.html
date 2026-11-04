@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amigurumi Pattern Generator</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        select, input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4f46e5;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #4338ca;
+        }
+        .conditional-fields {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 15px;
+        }
+        #outputResults {
+            margin-top: 30px;
+            border-top: 2px solid #eee;
+            padding-top: 20px;
+        }
+        .metrics-card {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .pattern-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .pattern-list li {
+            padding: 8px 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .pattern-list li:nth-child(even) {
+            background-color: #f9fafb;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Amigurumi Shape Generator</h2>
+
+    <!-- 1. Unit System Selection -->
+    <div class="form-group">
+        <label>Unit System:</label>
+        <select id="unitSystem" onchange="updateUnits()">
+            <option value="imperial" selected>Inches</option>
+            <option value="metric">Centimeters</option>
+        </select>
+    </div>
+
+    <!-- 2. Shape, Yarn, & Hook Size -->
+    <div class="form-group">
+        <label>Shape:</label>
+        <select id="shapeSelect" onchange="toggleShapeFields()">
+            <option value="sphere" selected>Sphere</option>
+            <option value="cylinder">Cylinder</option>
+            <option value="cone">Cone</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Yarn Weight:</label>
+        <select id="yarnWeight">
+            <option value="fingering">Fingering</option>
+            <option value="sport">Sport</option>
+            <option value="dk">DK</option>
+            <option value="worsted" selected>Worsted</option>
+            <option value="bulky">Bulky</option>
+            <option value="super_bulky">Super Bulky</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Hook Size (mm):</label>
+        <input type="number" id="hookSize" value="3.0" step="0.5">
+    </div>
+
+    <!-- 3. Shape-Specific Fields Container -->
+    <div id="shapeFields" class="conditional-fields">
+        <!-- Sphere Fields -->
+        <div id="sphereFields" class="shape-input-group">
+            <div class="form-group">
+                <label id="sphereDiamLabel">Target Diameter (inches):</label>
+                <input type="number" id="sphereDiameter" value="4.0" step="0.5">
+            </div>
+        </div>
+
+        <!-- Cylinder Fields -->
+        <div id="cylinderFields" class="shape-input-group" style="display: none;">
+            <div class="form-group">
+                <label id="cylDiamLabel">Target Diameter (inches):</label>
+                <input type="number" id="cylDiameter" value="3.0" step="0.5">
+            </div>
+            <div class="form-group">
+                <label id="cylHeightLabel">Target Height (inches):</label>
+                <input type="number" id="cylHeight" value="5.0" step="0.5">
+            </div>
+            <div class="form-group">
+                <label>Ends Configuration:</label>
+                <select id="cylClosed">
+                    <option value="true">Closed (Both ends capped)</option>
+                    <option value="false">Open (One end capped, Tube)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Cone Fields -->
+        <div id="coneFields" class="shape-input-group" style="display: none;">
+            <div class="form-group">
+                <label>Cone Taper Style:</label>
+                <select id="coneShapeSelect">
+                    <option value="narrow">Narrow (Pointy: Gnome hats, horns)</option>
+                    <option value="medium" selected>Medium (Standard: Ice cream cones, tree tops)</option>
+                    <option value="wide">Wide (Flared / Shallow)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label id="coneBaseLabel">Base Diameter (inches):</label>
+                <input type="number" id="coneBase" value="3.0" step="0.5">
+            </div>
+            <div class="form-group">
+                <label id="coneHeightLabel">Target Height (inches):</label>
+                <input type="number" id="coneHeight" value="4.0" step="0.5">
+            </div>
+        </div>
+    </div>
+
+    <button onclick="generatePattern()">Generate Pattern</button>
+
+    <div id="outputResults"></div>
+
+<script>
+function updateUnits() {
+    const unit = document.getElementById('unitSystem').value;
+    const unitLabel = unit === 'imperial' ? 'inches' : 'centimeters';
+
+    // Update dynamic label texts
+    document.getElementById('sphereDiamLabel').innerText = `Target Diameter (${unitLabel}):`;
+    document.getElementById('cylDiamLabel').innerText = `Target Diameter (${unitLabel}):`;
+    document.getElementById('cylHeightLabel').innerText = `Target Height (${unitLabel}):`;
+    document.getElementById('coneBaseLabel').innerText = `Base Diameter (${unitLabel}):`;
+    document.getElementById('coneHeightLabel').innerText = `Target Height (${unitLabel}):`;
+}
+
+function toggleShapeFields() {
+    const shape = document.getElementById('shapeSelect').value;
+    document.getElementById('sphereFields').style.display = shape === 'sphere' ? 'block' : 'none';
+    document.getElementById('cylinderFields').style.display = shape === 'cylinder' ? 'block' : 'none';
+    document.getElementById('coneFields').style.display = shape === 'cone' ? 'block' : 'none';
+}
+
+async function generatePattern() {
+    const shape = document.getElementById('shapeSelect').value;
+    const unit = document.getElementById('unitSystem').value;
+    const yarn = document.getElementById('yarnWeight').value;
+    const hook = document.getElementById('hookSize').value;
+
+    let queryParams = `?yarn_weight=${yarn}&hook_size_mm=${hook}`;
+
+    // Map inputs based on shape and unit system with correct max_ prefixes
+    if (shape === 'sphere') {
+        const val = document.getElementById('sphereDiameter').value;
+        queryParams += unit === 'imperial' ? `&max_diameter_inches=${val}` : `&max_diameter_cm=${val}`;
+    } else if (shape === 'cylinder') {
+        const diam = document.getElementById('cylDiameter').value;
+        const height = document.getElementById('cylHeight').value;
+        const closed = document.getElementById('cylClosed').value;
+        queryParams += unit === 'imperial' ? `&max_diameter_inches=${diam}&max_height_inches=${height}` : `&max_diameter_cm=${diam}&max_height_cm=${height}`;
+        queryParams += `&closed=${closed}`;
+    } else if (shape === 'cone') {
+        const coneShape = document.getElementById('coneShapeSelect').value;
+        const base = document.getElementById('coneBase').value;
+        const height = document.getElementById('coneHeight').value;
+        queryParams += `&cone_shape=${coneShape}`;
+        queryParams += unit === 'imperial' ? `&max_diameter_inches=${base}&max_height_inches=${height}` : `&max_diameter_cm=${base}&max_height_cm=${height}`;
+    }
+
+    // Use local development url or swap to your live Render url when deployed
+    const baseUrl = 'http://127.0.0.1:8000';
+    const url = `${baseUrl}/${shape}/${queryParams}`;
+
+    const outputDiv = document.getElementById('outputResults');
+    outputDiv.innerHTML = "<p>Generating your custom pattern...</p>";
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Failed to generate pattern. Check your parameters.");
+        const data = await response.json();
+
+        // Grab the selected unit system
+        const unit = document.getElementById('unitSystem').value;
+
+        // Dynamically select and round the correct dimension string based on unit
+        let dimensionDisplay = "";
+        if (shape === 'sphere') {
+            const size = unit === 'imperial' ? `${Number(data.dimensions.diameter_inches).toFixed(1)} inches` : `${Number(data.dimensions.diameter_cm).toFixed(1)} cm`;
+            dimensionDisplay = `<strong>Finished Diameter:</strong> ~${size}`;
+        } else if (shape === 'cylinder') {
+            const diamVal = data.dimensions.diameter_inches || data.dimensions.base_diameter_inches;
+            const heightVal = data.dimensions.height_inches;
+            const diamCm = data.dimensions.diameter_cm || data.dimensions.base_diameter_cm;
+            const heightCm = data.dimensions.height_cm;
+
+            const diam = unit === 'imperial' ? `${Number(diamVal).toFixed(1)} in` : `${Number(diamCm).toFixed(1)} cm`;
+            const height = unit === 'imperial' ? `${Number(heightVal).toFixed(1)} in` : `${Number(heightCm).toFixed(1)} cm`;
+            dimensionDisplay = `<strong>Finished Size:</strong> ~${diam} wide × ~${height} tall`;
+        } else if (shape === 'cone') {
+            const baseVal = data.dimensions.base_diameter_inches;
+            const heightVal = data.dimensions.height_inches;
+            const baseCm = data.dimensions.base_diameter_cm;
+            const heightCm = data.dimensions.height_cm;
+
+            const base = unit === 'imperial' ? `${Number(baseVal).toFixed(1)} in` : `${Number(baseCm).toFixed(1)} cm`;
+            const height = unit === 'imperial' ? `${Number(heightVal).toFixed(1)} in` : `${Number(heightCm).toFixed(1)} cm`;
+            dimensionDisplay = `<strong>Finished Size:</strong> ~${base} base × ~${height} tall (${data.dimensions.cone_shape} cone)`;
+        }
+
+        let html = `<h3>Pattern Specifications</h3>`;
+        html += `<div class="metrics-card">`;
+        html += `<p><strong>Total Rounds:</strong> ${data.total_rounds}</p>`;
+        html += `<p>${dimensionDisplay}</p>`;
+        html += `<p><strong>Estimated Yarn:</strong> ${data.dimensions.estimated_yarn_yards} yards (${data.dimensions.estimated_yarn_meters} meters)</p>`;
+        html += `</div>`;
+
+        html += `<h3>Round-by-Round Instructions</h3><ul class="pattern-list">`;
+        data.pattern.forEach(step => {
+            html += `<li><strong>Rnd ${step.round}:</strong> ${step.instruction}</li>`;
+        });
+        html += `</ul>`;
+
+        outputDiv.innerHTML = html;
+    } catch (error) {
+        console.error('Error:', error);
+        outputDiv.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
+    }
+}
+</script>
+
+</body>
+</html>
