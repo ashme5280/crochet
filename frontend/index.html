@@ -270,10 +270,10 @@ async function generatePattern() {
         html += `</div>`;
 
         html += `<h3>Round-by-Round Instructions</h3><ul class="pattern-list">`;
-        data.pattern.forEach(step => {
-            html += `<li><strong>Rnd ${step.round}:</strong> ${step.instruction}</li>`;
-        });
-        html += `</ul>`;
+                data.pattern.forEach(step => {
+                    html += `<li>${step.instruction}</li>`;
+                });
+                html += `</ul>`;
 
         outputDiv.innerHTML = html;
     } catch (error) {
