@@ -124,15 +124,15 @@ def get_oval_pattern(
     })
     total_stitch_count += current_stitches
 
-    # 2. Expansion Rounds (Matching the multi-part repeat structure)
+    # 2. Expansion Rounds (Adding 8 stitches per round across 4 corners)
     expansion_rounds = []
     while current_stitches < target_stitches:
         current_round += 1
-        current_stitches += 4
+        current_stitches += 8
 
-        # Build professional pattern repeats like *(Sc, inc) x2, sc X, (inc, Sc) x2
-        rep_count = max(1, (current_stitches - 16) // 8)
-        inst = f"Rnd {current_round}: *(Sc {rep_count}, inc) x2, sc {straight_sc_count}, (inc, sc {rep_count}) x2. Repeat from the * once more."
+        rep_count = max(1, (current_stitches - 16) // 16)
+
+        inst = f"Rnd {current_round}: *(Sc {rep_count}, inc) x2, sc {straight_sc_count}, (inc, sc {rep_count}) x2. Repeat from the * once more. ({current_stitches} sts)"
 
         instructions.append({
             "round": current_round,
@@ -151,15 +151,19 @@ def get_oval_pattern(
             "round": current_round,
             "phase": "even",
             "stitches_in_round": current_stitches,
-            "instruction": f"Rnd {current_round}: Sc {current_stitches}."
+            "instruction": f"Rnd {current_round}: Sc {current_stitches}. ({current_stitches} sts)"
         })
         total_stitch_count += current_stitches
 
     # 4. Decrease Rounds (Mirroring expansion)
     for rev_inst in reversed(expansion_rounds):
         current_round += 1
-        current_stitches -= 4
-        dec_inst = rev_inst.replace("inc", "dec").replace(f"Rnd {current_round - len(expansion_rounds) - even_rounds - 1}:", f"Rnd {current_round}:")
+        current_stitches -= 8
+
+        clean_inst = rev_inst.split(":", 1)[1] if ":" in rev_inst else rev_inst
+        clean_inst = clean_inst.replace("inc", "dec")
+
+        dec_inst = f"Rnd {current_round}:{clean_inst}"
 
         instructions.append({
             "round": current_round,
