@@ -169,6 +169,10 @@ def get_oval_pattern(
         })
         total_stitch_count += current_stitches
 
+    metrics = calculate_oval_metrics(
+        instructions, total_stitch_count, weight_key, hook_size_mm, length_in, width_in, oval_shape
+    )
+
     return {
         "shape": "oval",
         "parameters": {
