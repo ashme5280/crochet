@@ -124,13 +124,14 @@ def get_oval_pattern(
     })
     total_stitch_count += current_stitches
 
-    # 2. Expansion Rounds (Adding 8 stitches per round across 4 corners)
+    # 2. Expansion Rounds (Scaling the repeat count every single round)
     expansion_rounds = []
+    # Track a clean repeat counter starting at 1 for Rnd 2
+    rep_count = 1
+
     while current_stitches < target_stitches:
         current_round += 1
         current_stitches += 8
-
-        rep_count = max(1, (current_stitches - 16) // 16)
 
         inst = f"Rnd {current_round}: *(Sc {rep_count}, inc) x2, sc {straight_sc_count}, (inc, sc {rep_count}) x2. Repeat from the * once more. ({current_stitches} sts)"
 
@@ -141,6 +142,9 @@ def get_oval_pattern(
             "instruction": inst
         })
         expansion_rounds.append(inst)
+
+        # Increment the repeat count every round so it flows naturally (1, 2, 3, 4...)
+        rep_count += 1
         total_stitch_count += current_stitches
 
     # 3. Even Body Rounds (Height)
