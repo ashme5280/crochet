@@ -109,38 +109,65 @@ def get_oval_pattern(
     total_stitch_count = 0
     current_round = 1
 
-    # Foundation chain estimation based on length vs width difference
+    # 1. Foundation Chain & First Round
     chain_length_in = max(1.0, length_in - width_in)
-    foundation_chains = max(4, round(chain_length_in / stitch_w))
+    foundation_chains = max(3, round(chain_length_in / stitch_w))
+    straight_sc_count = foundation_chains - 2
 
-    current_stitches = foundation_chains * 2 + 4
+    current_stitches = (straight_sc_count + 2) * 2 + 6  # Foundation chain logic
+
     instructions.append({
-        "round": current_round, "phase": "foundation", "stitches_in_round": current_stitches,
-        "instruction": f"Rnd {current_round}: Chain {foundation_chains}, work around foundation chain starting in 2nd ch from hook: [inc, sc across {foundation_chains - 2} sts, 3 sc in last st], working down opposite side: sc across, inc in last st. ({current_stitches} sts)"
+        "round": current_round,
+        "phase": "foundation",
+        "stitches_in_round": current_stitches,
+        "instruction": f"Rnd {current_round}: Ch {foundation_chains}, starting in the 2nd st from the hook: inc, sc {straight_sc_count}, inc. Continue around the other side of the chain with: inc, sc {straight_sc_count}, inc."
     })
     total_stitch_count += current_stitches
 
-    # Expansion & body rounds
+    # 2. Expansion Rounds (Matching the multi-part repeat structure)
+    expansion_rounds = []
     while current_stitches < target_stitches:
         current_round += 1
-        current_stitches += 4  # Standard oval increases at 4 corners
+        current_stitches += 4
+
+        # Build professional pattern repeats like *(Sc, inc) x2, sc X, (inc, Sc) x2
+        rep_count = max(1, (current_stitches - 16) // 8)
+        inst = f"Rnd {current_round}: *(Sc {rep_count}, inc) x2, sc {straight_sc_count}, (inc, sc {rep_count}) x2. Repeat from the * once more."
+
         instructions.append({
-            "round": current_round, "phase": "expansion", "stitches_in_round": current_stitches,
-            "instruction": f"Rnd {current_round}: [Work increases at 2 corner tips and sc evenly along straight sides]. ({current_stitches} sts)"
+            "round": current_round,
+            "phase": "expansion",
+            "stitches_in_round": current_stitches,
+            "instruction": inst
         })
+        expansion_rounds.append(inst)
         total_stitch_count += current_stitches
 
-    # Even height rounds if requested or needed
+    # 3. Even Body Rounds (Height)
     even_rounds = 3 if oval_shape == OvalShape.egg_shaped else 1
     for _ in range(even_rounds):
         current_round += 1
         instructions.append({
-            "round": current_round, "phase": "even", "stitches_in_round": current_stitches,
-            "instruction": f"Rnd {current_round}: sc in each st around. ({current_stitches} sts)"
+            "round": current_round,
+            "phase": "even",
+            "stitches_in_round": current_stitches,
+            "instruction": f"Rnd {current_round}: Sc {current_stitches}."
         })
         total_stitch_count += current_stitches
 
-    metrics = calculate_oval_metrics(instructions, total_stitch_count, weight_key, hook_size_mm, length_in, width_in, oval_shape)
+    # 4. Decrease Rounds (Mirroring expansion)
+    for rev_inst in reversed(expansion_rounds):
+        current_round += 1
+        current_stitches -= 4
+        dec_inst = rev_inst.replace("inc", "dec").replace(f"Rnd {current_round - len(expansion_rounds) - even_rounds - 1}:", f"Rnd {current_round}:")
+
+        instructions.append({
+            "round": current_round,
+            "phase": "decrease",
+            "stitches_in_round": current_stitches,
+            "instruction": dec_inst
+        })
+        total_stitch_count += current_stitches
 
     return {
         "shape": "oval",
