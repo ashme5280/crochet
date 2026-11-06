@@ -97,7 +97,7 @@
 
 
 
-    <h2></h2>
+    <h2>Amigurumi Pattern Generator</h2>
 
     <!-- 1. Unit System Selection -->
     <div class="form-group">
@@ -115,6 +115,7 @@
             <option value="sphere" selected>Sphere</option>
             <option value="cylinder">Cylinder</option>
             <option value="cone">Cone</option>
+            <option value="oval">Oval</option>
         </select>
     </div>
 
@@ -183,6 +184,18 @@
                 <input type="number" id="coneHeight" value="4.0" step="0.5">
             </div>
         </div>
+
+        <!-- Oval Fields -->
+        <div id="ovalFields" class="shape-input-group" style="display: none;">
+            <div class="form-group">
+                <label id="ovalLengthLabel">Target Length (inches):</label>
+                <input type="number" id="ovalLength" value="5.0" step="0.5">
+            </div>
+            <div class="form-group">
+                <label id="ovalWidthLabel">Target Width (inches):</label>
+                <input type="number" id="ovalWidth" value="3.5" step="0.5">
+            </div>
+        </div>
     </div>
 
     <button onclick="generatePattern()">Generate Pattern</button>
@@ -194,12 +207,13 @@ function updateUnits() {
     const unit = document.getElementById('unitSystem').value;
     const unitLabel = unit === 'imperial' ? 'inches' : 'centimeters';
 
-    // Update dynamic label texts
     document.getElementById('sphereDiamLabel').innerText = `Target Diameter (${unitLabel}):`;
     document.getElementById('cylDiamLabel').innerText = `Target Diameter (${unitLabel}):`;
     document.getElementById('cylHeightLabel').innerText = `Target Height (${unitLabel}):`;
     document.getElementById('coneBaseLabel').innerText = `Base Diameter (${unitLabel}):`;
     document.getElementById('coneHeightLabel').innerText = `Target Height (${unitLabel}):`;
+    document.getElementById('ovalLengthLabel').innerText = `Target Length (${unitLabel}):`;
+    document.getElementById('ovalWidthLabel').innerText = `Target Width (${unitLabel}):`;
 }
 
 function toggleShapeFields() {
@@ -207,6 +221,7 @@ function toggleShapeFields() {
     document.getElementById('sphereFields').style.display = shape === 'sphere' ? 'block' : 'none';
     document.getElementById('cylinderFields').style.display = shape === 'cylinder' ? 'block' : 'none';
     document.getElementById('coneFields').style.display = shape === 'cone' ? 'block' : 'none';
+    document.getElementById('ovalFields').style.display = shape === 'oval' ? 'block' : 'none';
 }
 
 async function generatePattern() {
@@ -217,7 +232,6 @@ async function generatePattern() {
 
     let queryParams = `?yarn_weight=${yarn}&hook_size_mm=${hook}`;
 
-    // Map inputs based on shape and unit system with correct max_ prefixes
     if (shape === 'sphere') {
         const val = document.getElementById('sphereDiameter').value;
         queryParams += unit === 'imperial' ? `&max_diameter_inches=${val}` : `&max_diameter_cm=${val}`;
@@ -233,7 +247,84 @@ async function generatePattern() {
         const height = document.getElementById('coneHeight').value;
         queryParams += `&cone_shape=${coneShape}`;
         queryParams += unit === 'imperial' ? `&max_diameter_inches=${base}&max_height_inches=${height}` : `&max_diameter_cm=${base}&max_height_cm=${height}`;
+    } else if (shape === 'oval') {
+        const len = document.getElementById('ovalLength').value;
+        const wid = document.getElementById('ovalWidth').value;
+        queryParams += `&oval_shape=egg_shaped`;
+        queryParams += unit === 'imperial' ? `&max_length_inches=${len}&max_width_inches=${wid}` : `&max_length_cm=${len}&max_width_cm=${wid}`;
     }
 
-    // Use local development url or swap to your live Render url when deployed
-    const baseUrl = '
+    const baseUrl = 'https://ashme5280-amigurumi-api.onrender.com';
+    const url = `${baseUrl}/${shape}/${queryParams}`;
+
+    const outputDiv = document.getElementById('outputResults');
+    outputDiv.innerHTML = "<p>Generating your custom pattern...</p>";
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Failed to generate pattern. Check your parameters.");
+        const data = await response.json();
+
+        let dimensionDisplay = "";
+        if (shape === 'sphere') {
+            const size = unit === 'imperial' ? `${Number(data.dimensions.diameter_inches).toFixed(1)} inches` : `${Number(data.dimensions.diameter_cm).toFixed(1)} cm`;
+            dimensionDisplay = `<strong>Finished Diameter:</strong> ~${size}`;
+        } else if (shape === 'cylinder') {
+            const diamVal = data.dimensions.diameter_inches || data.dimensions.base_diameter_inches;
+            const heightVal = data.dimensions.height_inches;
+            const diamCm = data.dimensions.diameter_cm || data.dimensions.base_diameter_cm;
+            const heightCm = data.dimensions.height_cm;
+
+            const diam = unit === 'imperial' ? `${Number(diamVal).toFixed(1)} in` : `${Number(diamCm).toFixed(1)} cm`;
+            const height = unit === 'imperial' ? `${Number(heightVal).toFixed(1)} in` : `${Number(heightCm).toFixed(1)} cm`;
+            dimensionDisplay = `<strong>Finished Size:</strong> ~${diam} wide × ~${height} tall`;
+        } else if (shape === 'cone') {
+            const baseVal = data.dimensions.base_diameter_inches;
+            const heightVal = data.dimensions.height_inches;
+            const baseCm = data.dimensions.base_diameter_cm;
+            const heightCm = data.dimensions.height_cm;
+
+            const base = unit === 'imperial' ? `${Number(baseVal).toFixed(1)} in` : `${Number(baseCm).toFixed(1)} cm`;
+            const height = unit === 'imperial' ? `${Number(heightVal).toFixed(1)} in` : `${Number(heightCm).toFixed(1)} cm`;
+            dimensionDisplay = `<strong>Finished Size:</strong> ~${base} base × ~${height} tall (${data.dimensions.cone_shape} cone)`;
+        } else if (shape === 'oval') {
+            const lenVal = data.dimensions.max_length_inches;
+            const widVal = data.dimensions.max_width_inches;
+            const lenCm = data.dimensions.max_length_cm;
+            const widCm = data.dimensions.max_width_cm;
+
+            const len = unit === 'imperial' ? `${Number(lenVal).toFixed(1)} in` : `${Number(lenCm).toFixed(1)} cm`;
+            const wid = unit === 'imperial' ? `${Number(widVal).toFixed(1)} in` : `${Number(widCm).toFixed(1)} cm`;
+            dimensionDisplay = `<strong>Finished Size:</strong> ~${len} long × ~${wid} wide (egg-shaped)`;
+        }
+
+        let html = `<h3>Pattern Specifications</h3>`;
+        html += `<div class="metrics-card">`;
+        html += `<p><strong>Total Rounds:</strong> ${data.total_rounds}</p>`;
+        html += `<p>${dimensionDisplay}</p>`;
+        html += `<p><strong>Estimated Yarn:</strong> ${data.dimensions.estimated_yarn_yards} yards (${data.dimensions.estimated_yarn_meters} meters)</p>`;
+        html += `</div>`;
+
+        // Stuffing Tip Banner
+        html += `<div class="stuffing-tip">`;
+        html += `<strong>💡 Stuffing Tip:</strong>`;
+        html += `Start stuffing 2–3 rows into the decrease, adding more gradually as you shape before closing off.`;
+        html += `</div>`;
+
+        html += `<h3>Round-by-Round Instructions</h3><ul class="pattern-list">`;
+        data.pattern.forEach(step => {
+            html += `<li>${step.instruction}</li>`;
+        });
+        html += `</ul>`;
+
+        outputDiv.innerHTML = html;
+    } catch (error) {
+        console.error('Error:', error);
+        outputDiv.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
+    }
+}
+</script>
+
+
+
+</body>
