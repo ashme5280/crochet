@@ -5,51 +5,55 @@ body {
     max-width: 700px;
     margin: 40px auto;
     padding: 20px;
+}
+
+/* Main Container Card */
+.generator-form {
     background: #ffffff;
+    padding: 25px;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
+
 h2 {
     text-align: center;
     color: #2c3e50;
 }
+
 .nav-links {
     text-align: center;
     margin-bottom: 25px;
     font-weight: 600;
 }
+
 .nav-links a {
     color: #4f46e5;
     text-decoration: none;
     margin: 0 8px;
 }
+
 .nav-links a.active {
     text-decoration: underline;
     color: #1e1b4b;
 }
-.nav-links .info-link {
-    font-size: 0.85rem;
-    font-weight: bold;
-    color: #2563eb;
-    cursor: pointer;
-    vertical-align: super;
-    margin-left: 2px;
-}
-.nav-links .info-link:hover {
-    text-decoration: underline;
-}
+
 .form-group {
     margin-bottom: 15px;
 }
+
 .label-row {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     margin-bottom: 5px;
 }
+
 label {
     font-weight: 600;
+    display: block;
+    margin-bottom: 5px;
 }
+
 .info-link {
     background: none;
     border: none;
@@ -60,9 +64,33 @@ label {
     padding: 0;
     text-decoration: underline;
 }
+
+.label-row .info-link {
+    margin-top: 2px;
+    font-size: 12px;
+}
+
 .info-link:hover {
     color: #4338ca;
 }
+
+.form-row-split {
+    display: flex;
+    gap: 15px;
+}
+
+.form-row-split .form-group {
+    flex: 1;
+}
+
+/* Stack split rows on mobile screens */
+@media (max-width: 500px) {
+    .form-row-split {
+        flex-direction: column;
+        gap: 0;
+    }
+}
+
 select, input {
     width: 100%;
     padding: 10px;
@@ -71,11 +99,13 @@ select, input {
     font-size: 16px;
     box-sizing: border-box;
 }
+
 input:disabled, select:disabled {
     background-color: #e5e7eb;
     color: #9ca3af;
     cursor: not-allowed;
 }
+
 button.generate-btn {
     background-color: #4f46e5;
     color: white;
@@ -88,9 +118,11 @@ button.generate-btn {
     width: 100%;
     margin-top: 10px;
 }
+
 button.generate-btn:hover {
     background-color: #4338ca;
 }
+
 .conditional-fields {
     background: #f8fafc;
     padding: 15px;
@@ -98,30 +130,56 @@ button.generate-btn:hover {
     border: 1px solid #e2e8f0;
     margin-bottom: 15px;
 }
+
+.advanced-settings {
+    background: #f8fafc;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 15px;
+}
+
+.advanced-settings summary {
+    font-weight: 600;
+    cursor: pointer;
+    color: #2c3e50;
+}
+
+.advanced-settings .nested-fields {
+    margin-top: 12px;
+}
+
 #outputResults {
     margin-top: 30px;
-    border-top: 2px solid #eee;
-    padding-top: 20px;
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
+
 .metrics-card {
     background: #f3f4f6;
     padding: 15px;
     border-radius: 8px;
     margin-bottom: 20px;
 }
+
 .supplies-list {
     margin: 8px 0 0 20px;
     padding: 0;
     font-size: 14px;
 }
+
 .pattern-list {
     list-style-type: none;
     padding: 0;
 }
+
 .pattern-list li {
     padding: 8px 12px;
     border-bottom: 1px solid #e5e7eb;
 }
+
 .pattern-list li:nth-child(even) {
     background-color: #f9fafb;
 }
@@ -135,50 +193,62 @@ button.generate-btn:hover {
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    padding: 20px; /* Prevents card from touching screen edges on mobile */
 }
+
 .modal-overlay.active {
     display: flex !important;
 }
+
 .modal-card {
     background: #ffffff;
-    width: 90%;
-    max-width: 650px;
-    max-height: 80vh;
-    overflow-y: auto;
-    padding: 25px;
+    width: 100%;
+    max-width: 750px;       /* Slightly wider for comfortable table reading */
+    max-height: 90vh;       /* Increased from 80vh to use more vertical screen space */
+    overflow-y: auto;       /* Smooth scrolling for long text/tables */
+    padding: 30px;
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     position: relative;
+    box-sizing: border-box;
 }
+
 .modal-close {
     position: absolute;
     top: 15px;
     right: 20px;
     background: none;
     border: none;
-    font-size: 22px;
+    font-size: 24px;
     font-weight: bold;
     cursor: pointer;
     color: #666;
+    padding: 5px;
 }
+
 .modal-close:hover {
     color: #000;
 }
+
 .modal-card h3 {
     margin-top: 0;
     color: #2c3e50;
+    padding-right: 30px; /* Prevents title from overlapping the close button */
 }
+
 .modal-card table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
-    font-size: 13px;
+    margin-top: 15px;
+    font-size: 14px;
 }
+
 .modal-card th, .modal-card td {
     border: 1px solid #e2e8f0;
-    padding: 8px;
+    padding: 10px 12px;
     text-align: left;
 }
+
 .modal-card th {
     background-color: #f8fafc;
 }

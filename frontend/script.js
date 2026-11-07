@@ -126,16 +126,16 @@ function updateCylinderUnits() {
 // --- Input Mode Toggles ---
 function toggleSphereInputMode() {
     const mode = document.getElementById('sphereInputMode').value;
-    const diamInput = document.getElementById('sphereDiameter');
-    const stitchInput = document.getElementById('sphereStitches');
+    const diamGroup = document.getElementById('sphereDiamGroup');
+    const stitchGroup = document.getElementById('sphereStitchGroup');
 
-    if (diamInput && stitchInput) {
+    if (diamGroup && stitchGroup) {
         if (mode === 'diameter') {
-            diamInput.disabled = false;
-            stitchInput.disabled = true;
+            diamGroup.style.display = 'block';
+            stitchGroup.style.display = 'none';
         } else {
-            diamInput.disabled = true;
-            stitchInput.disabled = false;
+            diamGroup.style.display = 'none';
+            stitchGroup.style.display = 'block';
         }
     }
 }
