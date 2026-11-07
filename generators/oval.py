@@ -76,7 +76,8 @@ def get_oval_pattern(
     max_width_inches: float | None = Query(None, gt=0, description="Target finished width in inches"),
     max_width_cm: float | None = Query(None, gt=0, description="Target finished width in cm"),
     max_height_inches: float | None = Query(None, gt=0, description="Target vertical height/depth in inches"),
-    max_height_cm: float | None = Query(None, gt=0, description="Target vertical height/depth in cm")
+    max_height_cm: float | None = Query(None, gt=0, description="Target vertical height/depth in cm"),
+    stuffing: bool = Query(True, description="Include stuffing instructions")
 ):
     # Validate length options
     provided_len = sum(1 for opt in [max_length_inches, max_length_cm] if opt is not None)
@@ -85,12 +86,19 @@ def get_oval_pattern(
     if provided_len == 0:
         raise HTTPException(status_code=400, detail="You must provide a target length.")
 
+    # Automatically equate Width to Height if Width wasn't explicitly provided
+    if max_width_inches is None and max_width_cm is None:
+        if max_height_inches is not None:
+            max_width_inches = max_height_inches
+        elif max_height_cm is not None:
+            max_width_cm = max_height_cm
+        else:
+            raise HTTPException(status_code=400, detail="You must provide a target width or height.")
+
     # Validate width options
     provided_wid = sum(1 for opt in [max_width_inches, max_width_cm] if opt is not None)
     if provided_wid > 1:
         raise HTTPException(status_code=400, detail="Provide ONLY ONE width option.")
-    if provided_wid == 0:
-        raise HTTPException(status_code=400, detail="You must provide a target width.")
 
     # Convert metrics to inches
     length_in = max_length_inches if max_length_inches is not None else (max_length_cm / 2.54)
@@ -100,7 +108,6 @@ def get_oval_pattern(
     base_width = YARN_STITCH_WIDTH_INCHES.get(weight_key, 0.25)
     stitch_w = base_width * (hook_size_mm / 3.5)
 
-    # Calculate target stitches around the perimeter based on dimensions
     target_stitches = round((2 * (length_in + width_in) * math.pi * 0.5) / stitch_w)
     if target_stitches < 16:
         target_stitches = 16
@@ -109,24 +116,21 @@ def get_oval_pattern(
     total_stitch_count = 0
     current_round = 1
 
-    # 1. Foundation Chain & First Round
-    chain_length_in = max(1.0, length_in - width_in)
-    foundation_chains = max(3, round(chain_length_in / stitch_w))
-    straight_sc_count = foundation_chains - 2
-
-    current_stitches = (straight_sc_count + 2) * 2 + 6  # Foundation chain logic
+    # 1. Foundation Round (e.g., 14 sts)
+    starting_stitches = 14
+    current_stitches = starting_stitches
+    straight_sc_count = 4
 
     instructions.append({
         "round": current_round,
         "phase": "foundation",
         "stitches_in_round": current_stitches,
-        "instruction": f"Rnd {current_round}: Ch {foundation_chains}, starting in the 2nd st from the hook: inc, sc {straight_sc_count}, inc. Continue around the other side of the chain with: inc, sc {straight_sc_count}, inc."
+        "instruction": f"Rnd {current_round}: Ch 5, starting in the 2nd st from the hook: inc, sc {straight_sc_count}, inc. Continue around the other side of the chain with: inc, sc {straight_sc_count}, inc. ({current_stitches} sts)"
     })
     total_stitch_count += current_stitches
 
-    # 2. Expansion Rounds (Scaling the repeat count every single round)
+    # 2. Expansion Rounds (Adding 8 stitches per round)
     expansion_rounds = []
-    # Track a clean repeat counter starting at 1 for Rnd 2
     rep_count = 1
 
     while current_stitches < target_stitches:
@@ -143,11 +147,10 @@ def get_oval_pattern(
         })
         expansion_rounds.append(inst)
 
-        # Increment the repeat count every round so it flows naturally (1, 2, 3, 4...)
         rep_count += 1
         total_stitch_count += current_stitches
 
-    # 3. Even Body Rounds (Height)
+    # 3. Even Body Rounds
     even_rounds = 3 if oval_shape == OvalShape.egg_shaped else 1
     for _ in range(even_rounds):
         current_round += 1
@@ -159,22 +162,40 @@ def get_oval_pattern(
         })
         total_stitch_count += current_stitches
 
-    # 4. Decrease Rounds (Mirroring expansion)
+# 4. Decrease Rounds (Mirroring expansion down to the 14-stitch starting count)
+    decrease_step = 0
+    total_dec_rounds = len(expansion_rounds)
+
     for rev_inst in reversed(expansion_rounds):
         current_round += 1
-        current_stitches -= 8
+        current_stitches -= 8  # Subtracts 8 stitches each round (e.g., 110 -> 102 -> 94...)
+        decrease_step += 1
 
+        # Clean the expansion instruction and turn 'inc' into 'dec'
         clean_inst = rev_inst.split(":", 1)[1] if ":" in rev_inst else rev_inst
         clean_inst = clean_inst.replace("inc", "dec")
 
-        dec_inst = f"Rnd {current_round}:{clean_inst}"
+        # Strip out the old stitch count from the copied string and replace with the new decremented count
+        base_text = clean_inst.rsplit("(", 1)[0].strip()
 
-        instructions.append({
+        # If this is the very last decrease round, append the fasten-off language and match 14 sts
+        if current_stitches == starting_stitches:
+            dec_inst = f"Rnd {current_round}:{base_text} Fasten off with long tail, then pull yarn through each stitch in the round and tighten to close shape. ({current_stitches} sts)"
+        else:
+            dec_inst = f"Rnd {current_round}:{base_text} ({current_stitches} sts)"
+
+        step_dict = {
             "round": current_round,
             "phase": "decrease",
             "stitches_in_round": current_stitches,
             "instruction": dec_inst
-        })
+        }
+
+        # Add stuffing prompt partway through the decrease rounds if stuffing is enabled
+        if stuffing and decrease_step == max(1, total_dec_rounds // 2):
+            step_dict["stuffing_instruction"] = "Start stuffing firmly here, adding more gradually as you shape before closing off."
+
+        instructions.append(step_dict)
         total_stitch_count += current_stitches
 
     metrics = calculate_oval_metrics(
@@ -189,10 +210,16 @@ def get_oval_pattern(
             "oval_shape": oval_shape.value,
             "max_length_inches": max_length_inches,
             "max_length_cm": max_length_cm,
-            "max_width_inches": max_width_inches,
-            "max_width_cm": max_width_cm
+            "max_height_inches": max_height_inches,
+            "max_height_cm": max_height_cm,
+            "stuffing": stuffing
         },
         "dimensions": metrics,
+        "supplies_you_need": {
+            "estimated_yarn": f"{metrics['estimated_yarn_yards']} yards ({metrics['estimated_yarn_meters']} meters)",
+            "hook": f"{hook_size_mm} mm",
+            "stuffing_volume": "Standard Poly-Fil" if stuffing else "None"
+        },
         "total_rounds": len(instructions),
         "pattern": instructions
     }

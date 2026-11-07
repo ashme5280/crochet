@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amigurumi Oval Pattern Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <h2>Amigurumi Pattern Generator</h2>
+
+    <!-- Navigation Bar -->
+    <div class="nav-links">
+        <a href="sphere.html">Sphere</a> |
+        <a href="cylinder.html">Cylinder</a> |
+        <a href="cone.html">Cone</a> |
+        <a href="oval.html" class="active">Oval</a>
+    </div>
+
+    <!-- Centered Shape Description Link -->
+    <div style="text-align: center; margin: 15px 0;">
+        <button type="button" class="info-link" onclick="openModal('ovalModal')" style="background: none; border: none; font-size: 0.95rem;">Why make an oval?</button>
+    </div>
+
+    <div class="generator-form">
+
+        <!-- 1. Top Row: Units -->
+        <div class="form-group">
+            <label>Do you use Inches or Centimeters?</label>
+            <select id="unitSystem" onchange="updateOvalUnits()">
+                <option value="imperial" selected>Inches</option>
+                <option value="metric">Centimeters</option>
+            </select>
+        </div>
+
+        <!-- 2. Second Row: Split Hook Size & Yarn Weight -->
+        <div class="form-row-split">
+            <div class="form-group">
+                <div class="label-row">
+                    <label>Hook Size (mm):</label>
+                    <button type="button" class="info-link" onclick="openModal('hookModal')">Amigurumi Yarn & Hook Guide</button>
+                </div>
+                <input type="number" id="hookSize" value="3.0" min="0.5" max="35.0" step="0.5">
+            </div>
+
+            <div class="form-group">
+                <div class="label-row">
+                    <label>Yarn Weight:</label>
+                    <button type="button" class="info-link" onclick="openModal('yarnModal')">What are Yarn Weights?</button>
+                </div>
+                <select id="yarnWeight">
+                    <option value="fingering">Fingering</option>
+                    <option value="sport">Sport</option>
+                    <option value="dk" selected>DK</option>
+                    <option value="worsted">Worsted</option>
+                    <option value="bulky">Bulky</option>
+                    <option value="super_bulky">Super Bulky</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 3. Oval-Specific Fields Container (Side-by-Side Length & Height) -->
+        <div id="shapeFields" class="conditional-fields">
+            <div id="ovalFields" class="shape-input-group">
+
+                <div class="form-row-split">
+                    <div class="form-group">
+                        <label id="ovalLengthLabel">Target Length (inches):</label>
+                        <input type="number" id="ovalLength" value="4.0" min="0.5" max="50.0" step="0.5">
+                    </div>
+
+                    <div class="form-group">
+                        <label id="ovalHeightLabel">Target Height (inches):</label>
+                        <input type="number" id="ovalHeight" value="3.0" min="0.5" max="50.0" step="0.5">
+                    </div>
+                </div>
+
+                <!-- Stuffing Option -->
+                <div class="form-group" style="margin-top: 15px;">
+                    <div class="label-row">
+                        <label>Add Stuffing?</label>
+                        <button type="button" class="info-link" onclick="openModal('stuffingModal')">Stuffing Guide</button>
+                    </div>
+                    <select id="stuffingOpt">
+                        <option value="yes" selected>Yes (Standard Poly-Fil)</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+
+            </div>
+        </div>
+
+        <button id="generateBtn" type="button" class="generate-btn" onclick="generateOvalPattern()">Generate Oval Pattern</button>
+
+        <!-- Print / PDF Export Button -->
+        <div style="text-align: center; margin-top: 12px;">
+            <button type="button" class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+        </div>
+    </div>
+
+    <div id="outputResults"></div>
+
+    <!-- MODAL POPUPS -->
+    <div id="ovalModal" class="modal-overlay">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModal('ovalModal')">&times;</button>
+            <h3>Why make an oval?</h3>
+            <p>Ovals form the stable, anatomical foundation for animal bodies, feet, shoes, snouts, and pill-shaped plushies without needing circular rounds.</p>
+        </div>
+    </div>
+
+    <!-- Script Logic -->
+    <script src="script.js"></script>
+    <script>
+        function updateOvalUnits() {
+            const unit = document.getElementById('unitSystem').value;
+            const unitLabel = unit === 'imperial' ? 'inches' : 'centimeters';
+            const lengthLabel = document.getElementById('ovalLengthLabel');
+            const heightLabel = document.getElementById('ovalHeightLabel');
+            if (lengthLabel) lengthLabel.innerText = `Target Length (${unitLabel}):`;
+            if (heightLabel) heightLabel.innerText = `Target Height (${unitLabel}):`;
+        }
+    </script>
+</body>
+</html>

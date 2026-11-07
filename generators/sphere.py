@@ -221,7 +221,7 @@ def get_sphere_pattern(
     # 6. Final Round
     current_round += 1
     current_stitches -= initial_stitches
-    final_instruction_text = f"Rnd {current_round}: [dec] x {initial_stitches}, fasten off and weave in tail. ({current_stitches} sts)"
+    final_instruction_text = f"Rnd {current_round}: [dec] x {initial_stitches}. Fasten off leaving a long tail and pull tail through all stitches and tighten to close shape. ({current_stitches} sts)"
     total_stitch_count += current_stitches
 
     metrics = calculate_sphere_metrics(total_stitch_count, weight_key, hook_size_mm, max_stitches, stuffing.value)
