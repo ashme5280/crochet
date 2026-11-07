@@ -1,14 +1,18 @@
-# Amigurumi Pattern Generator
+# Amigurumi Pattern Generator API & Application
 
-A full-stack application and API that generates precise, custom round-by-round crochet patterns, dimensions, and yarn estimates for amigurumi components.
+A full-stack application designed to dynamically calculate and generate custom crochet amigurumi patterns, complete with precise stitch counts, yardage estimators, dimensions, and assembly instructions.
 
 ---
 
 ## Features
-* **Multi-Shape Support:** Generate custom patterns for **Spheres**, **Cylinders**, **Cones**, and **Ovals** (egg-shaped).
-* **Dynamic Sizing:** Input your target dimensions in either **Imperial (inches)** or **Metric (centimeters)**.
-* **Yarn & Hook Customization:** Select from various yarn weights (Fingering to Super Bulky) and hook sizes.
-* **Smart Finishing Tips:** Built-in stuffing guidelines and finishing instructions ("Fasten off and weave in tail.") tailored to each component shape.
+
+* **Multi-Shape Generation:** Automatically computes round-by-round crochet instructions for various amigurumi components (Spheres, Ovals, Cones, Cylinders, etc.).
+* **Dynamic Sizing:** Supports custom inputs by length, width, height, or base stitch count/diameter across multiple yarn weights (Fingering to Super Bulky) and hook sizes.
+* **Smart Adjustments:** 
+  * Ovals mirror their expansion and decrease phases symmetrically back to the starting foundation count.
+  * Open-cone shapes include specific final expansion calculations and specialized open-cone stuffing and attachment tail instructions.
+* **Yarn & Material Estimators:** Calculates estimated yardage, meters, weight (grams/oz), and finished dimensions automatically.
+* **FastAPI Backend:** Built with high-performance Python endpoints supporting clean query parameters and robust validation.
 
 ---
 
@@ -17,13 +21,12 @@ A full-stack application and API that generates precise, custom round-by-round c
 ```text
 amigurumi-generator/
 │
-├── backend/
-│   ├── main.py              # FastAPI application server & routing endpoints
-│   ├── generator.py         # Core mathematical pattern generation logic for shapes
-│   └── requirements.py      # Python backend dependencies
+├── generators/              # Shape pattern calculation modules
+│   ├── __init__.py
+│   ├── oval.py              # Oval component generator
+│   ├── cone.py              # Open cone/tail generator
+│   └── sphere.py            # Sphere component generator
 │
-├── frontend/
-│   └── index.html           # Interactive HTML/JS client interface
-│
-├── README.md                # Project documentation and setup guide
-└── render.yaml              # Cloud hosting deployment configurations for Render
+├── main.py                  # FastAPI application entry point
+├── requirements.txt         # Python dependencies
+└── README.md                # Project documentation
