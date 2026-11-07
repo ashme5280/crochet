@@ -1,7 +1,16 @@
+:root {
+    --bg-color: #f5f6f8;        /* Soft cool pearl gray base */
+    --card-bg: #ffffff;         /* Pure white form background */
+    --primary-color: #7c6992;   /* Dusty lavender for buttons & active states */
+    --primary-hover: #65537b;   /* Deep plum for hover effects */
+    --text-color: #222026;      /* Midnight slate text for high readability */
+    --border-color: #e3e4e9;    /* Soft periwinkle-gray dividers */
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #f9f9f9;
-    color: #333;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     max-width: 700px;
     margin: 40px auto;
     padding: 20px;
@@ -9,15 +18,16 @@ body {
 
 /* Main Container Card */
 .generator-form {
-    background: #ffffff;
+    background: var(--card-bg);
     padding: 25px;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-color);
 }
 
 h2 {
     text-align: center;
-    color: #2c3e50;
+    color: var(--text-color);
 }
 
 .nav-links {
@@ -27,14 +37,18 @@ h2 {
 }
 
 .nav-links a {
-    color: #4f46e5;
+    color: var(--primary-color);
     text-decoration: none;
     margin: 0 8px;
 }
 
+.nav-links a:hover {
+    color: var(--primary-hover);
+}
+
 .nav-links a.active {
     text-decoration: underline;
-    color: #1e1b4b;
+    color: var(--text-color);
 }
 
 .form-group {
@@ -52,12 +66,13 @@ label {
     font-weight: 600;
     display: block;
     margin-bottom: 5px;
+    color: var(--text-color);
 }
 
 .info-link {
     background: none;
     border: none;
-    color: #4f46e5;
+    color: var(--primary-color);
     cursor: pointer;
     font-size: 13px;
     font-weight: 600;
@@ -71,7 +86,7 @@ label {
 }
 
 .info-link:hover {
-    color: #4338ca;
+    color: var(--primary-hover);
 }
 
 .form-row-split {
@@ -94,10 +109,12 @@ label {
 select, input {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     font-size: 16px;
     box-sizing: border-box;
+    background-color: var(--card-bg);
+    color: var(--text-color);
 }
 
 input:disabled, select:disabled {
@@ -107,7 +124,7 @@ input:disabled, select:disabled {
 }
 
 button.generate-btn {
-    background-color: #4f46e5;
+    background-color: var(--primary-color);
     color: white;
     border: none;
     padding: 12px 20px;
@@ -117,32 +134,33 @@ button.generate-btn {
     cursor: pointer;
     width: 100%;
     margin-top: 10px;
+    transition: background-color 0.2s ease;
 }
 
 button.generate-btn:hover {
-    background-color: #4338ca;
+    background-color: var(--primary-hover);
 }
 
 .conditional-fields {
-    background: #f8fafc;
+    background: #faf9fb;
     padding: 15px;
     border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
     margin-bottom: 15px;
 }
 
 .advanced-settings {
-    background: #f8fafc;
+    background: #faf9fb;
     padding: 12px 15px;
     border-radius: 8px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
     margin-bottom: 15px;
 }
 
 .advanced-settings summary {
     font-weight: 600;
     cursor: pointer;
-    color: #2c3e50;
+    color: var(--text-color);
 }
 
 .advanced-settings .nested-fields {
@@ -151,17 +169,19 @@ button.generate-btn:hover {
 
 #outputResults {
     margin-top: 30px;
-    background: #ffffff;
+    background: var(--card-bg);
     padding: 25px;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-color);
 }
 
 .metrics-card {
-    background: #f3f4f6;
+    background: #faf9fb;
     padding: 15px;
     border-radius: 8px;
     margin-bottom: 20px;
+    border: 1px solid var(--border-color);
 }
 
 .supplies-list {
@@ -177,11 +197,11 @@ button.generate-btn:hover {
 
 .pattern-list li {
     padding: 8px 12px;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .pattern-list li:nth-child(even) {
-    background-color: #f9fafb;
+    background-color: #faf9fb;
 }
 
 /* Modal Popup Styles */
@@ -189,11 +209,11 @@ button.generate-btn:hover {
     display: none;
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.4);
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    padding: 20px; /* Prevents card from touching screen edges on mobile */
+    padding: 20px;
 }
 
 .modal-overlay.active {
@@ -201,14 +221,14 @@ button.generate-btn:hover {
 }
 
 .modal-card {
-    background: #ffffff;
+    background: var(--card-bg);
     width: 100%;
-    max-width: 750px;       /* Slightly wider for comfortable table reading */
-    max-height: 90vh;       /* Increased from 80vh to use more vertical screen space */
-    overflow-y: auto;       /* Smooth scrolling for long text/tables */
+    max-width: 750px;
+    max-height: 90vh;
+    overflow-y: auto;
     padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
     position: relative;
     box-sizing: border-box;
 }
@@ -227,13 +247,13 @@ button.generate-btn:hover {
 }
 
 .modal-close:hover {
-    color: #000;
+    color: var(--text-color);
 }
 
 .modal-card h3 {
     margin-top: 0;
-    color: #2c3e50;
-    padding-right: 30px; /* Prevents title from overlapping the close button */
+    color: var(--text-color);
+    padding-right: 30px;
 }
 
 .modal-card table {
@@ -244,11 +264,12 @@ button.generate-btn:hover {
 }
 
 .modal-card th, .modal-card td {
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--border-color);
     padding: 10px 12px;
     text-align: left;
 }
 
 .modal-card th {
-    background-color: #f8fafc;
+    background-color: #faf9fb;
+    color: var(--text-color);
 }
