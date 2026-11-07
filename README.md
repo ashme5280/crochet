@@ -13,6 +13,7 @@ A full-stack application designed to dynamically calculate and generate custom c
   * Open-cone shapes include specific final expansion calculations and specialized open-cone stuffing and attachment tail instructions.
 * **Yarn & Material Estimators:** Calculates estimated yardage, meters, weight (grams/oz), and finished dimensions automatically.
 * **FastAPI Backend:** Built with high-performance Python endpoints supporting clean query parameters and robust validation.
+* **Interactive Frontend:** Built with React, Vite, and Tailwind CSS for real-time pattern customization and previewing.
 
 ---
 
@@ -20,6 +21,16 @@ A full-stack application designed to dynamically calculate and generate custom c
 
 ```text
 amigurumi-generator/
+│
+├── frontend/                # React / Vite frontend application
+│   ├── public/              # Static assets
+│   ├── src/                 # Source code components and UI
+│   │   ├── App.jsx          # Main application component
+│   │   ├── main.jsx         # React DOM entry point
+│   │   └── index.css        # Tailwind CSS styles
+│   ├── index.html           # HTML template
+│   ├── package.json         # Frontend dependencies and scripts
+│   └── vite.config.js       # Vite configuration
 │
 ├── generators/              # Shape pattern calculation modules
 │   ├── __init__.py
