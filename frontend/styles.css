@@ -1,0 +1,173 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+h2 {
+    text-align: center;
+    color: #2c3e50;
+}
+.nav-links {
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 600;
+}
+.nav-links a {
+    color: #4f46e5;
+    text-decoration: none;
+    margin: 0 8px;
+}
+.nav-links a.active {
+    text-decoration: underline;
+    color: #1e1b4b;
+}
+.form-group {
+    margin-bottom: 15px;
+}
+.label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+label {
+    font-weight: 600;
+}
+.info-link {
+    background: none;
+    border: none;
+    color: #4f46e5;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 0;
+    text-decoration: underline;
+}
+.info-link:hover {
+    color: #4338ca;
+}
+select, input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+input:disabled, select:disabled {
+    background-color: #e5e7eb;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+button.generate-btn {
+    background-color: #4f46e5;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+}
+button.generate-btn:hover {
+    background-color: #4338ca;
+}
+.conditional-fields {
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 15px;
+}
+#outputResults {
+    margin-top: 30px;
+    border-top: 2px solid #eee;
+    padding-top: 20px;
+}
+.metrics-card {
+    background: #f3f4f6;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+.supplies-list {
+    margin: 8px 0 0 20px;
+    padding: 0;
+    font-size: 14px;
+}
+.pattern-list {
+    list-style-type: none;
+    padding: 0;
+}
+.pattern-list li {
+    padding: 8px 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+.pattern-list li:nth-child(even) {
+    background-color: #f9fafb;
+}
+
+/* Modal Popup Styles */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.modal-overlay.active {
+    display: flex !important;
+}
+.modal-card {
+    background: #ffffff;
+    width: 90%;
+    max-width: 650px;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    position: relative;
+}
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #666;
+}
+.modal-close:hover {
+    color: #000;
+}
+.modal-card h3 {
+    margin-top: 0;
+    color: #2c3e50;
+}
+.modal-card table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 13px;
+}
+.modal-card th, .modal-card td {
+    border: 1px solid #e2e8f0;
+    padding: 8px;
+    text-align: left;
+}
+.modal-card th {
+    background-color: #f8fafc;
+}

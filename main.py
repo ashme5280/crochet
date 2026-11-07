@@ -24,9 +24,10 @@ app.include_router(cylinder.router)
 app.include_router(cone.router)
 app.include_router(oval.router)
 
-# Mount your frontend directory
-app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
-
+# 1. Serve sphere.html as the root home page
 @app.get("/")
-def read_index():
-    return FileResponse("frontend/index.html")
+def read_root():
+    return FileResponse("frontend/sphere.html")
+
+# 2. Mount static files from the local frontend folder
+app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
