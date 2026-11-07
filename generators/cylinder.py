@@ -170,11 +170,19 @@ def get_cylinder_pattern(
 
     for i in range(height_rounds):
         current_round += 1
+        is_last_body_round = (i == height_rounds - 1)
+
+        # Build instruction text: if open and it's the last round, append fasten off instructions
+        if not closed and is_last_body_round:
+            instruction_text = f"Rnd {current_round}: sc in each st around, fasten off and weave in tail. ({current_stitches} sts)"
+        else:
+            instruction_text = f"Rnd {current_round}: sc in each st around. ({current_stitches} sts)"
+
         round_data = {
             "round": current_round,
             "phase": "even_tube",
             "stitches_in_round": current_stitches,
-            "instruction": f"Rnd {current_round}: sc in each st around. ({current_stitches} sts)"
+            "instruction": instruction_text
         }
 
         # Embed stuffing instruction directly into the round if triggered here

@@ -19,109 +19,130 @@
     </div>
 
     <!-- Centered Shape Description Link -->
-        <div style="text-align: center; margin: 15px 0;">
-            <button type="button" class="info-link" onclick="openModal('cylinderModal')" style="background: none; border: none; font-size: 0.95rem;">Why make a cylinder?</button>
-        </div>
-
-    <!-- 1. Universal Settings -->
-    <div class="form-group">
-        <label>Unit System:</label>
-        <select id="unitSystem">
-            <option value="imperial" selected>Inches</option>
-            <option value="metric">Centimeters</option>
-        </select>
+    <div style="text-align: center; margin: 15px 0;">
+        <button type="button" class="info-link" onclick="openModal('cylinderModal')" style="background: none; border: none; font-size: 0.95rem;">Why make a cylinder?</button>
     </div>
 
-    <div class="form-group">
-        <div class="label-row">
-            <label>Yarn Weight:</label>
-            <button type="button" class="info-link" onclick="openModal('yarnModal')">What are Yarn Weights?</button>
+    <div class="generator-form">
+
+        <!-- 1. Top Row: Units -->
+        <div class="form-group">
+            <label>Do you use Inches or Centimeters?</label>
+            <select id="unitSystem">
+                <option value="imperial" selected>Inches</option>
+                <option value="metric">Centimeters</option>
+            </select>
         </div>
-        <select id="yarnWeight">
-            <option value="fingering">Fingering</option>
-            <option value="sport">Sport</option>
-            <option value="dk" selected>DK</option>
-            <option value="worsted">Worsted</option>
-            <option value="bulky">Bulky</option>
-            <option value="super_bulky">Super Bulky</option>
-        </select>
-    </div>
 
-    <div class="form-group">
-        <div class="label-row">
-            <label>Hook Size (mm):</label>
-            <button type="button" class="info-link" onclick="openModal('hookModal')">Amigurumi Yarn & Hook Guide</button>
-        </div>
-        <input type="number" id="hookSize" value="3.0" min="0.5" max="35.0" step="0.5">
-    </div>
-
-    <!-- 2. Cylinder-Specific Fields Container -->
-    <div id="shapeFields" class="conditional-fields">
-        <div id="cylinderFields" class="shape-input-group">
-
-            <!-- Diameter / Width Input Mode -->
+        <!-- 2. Second Row: Split Hook Size & Yarn Weight -->
+        <div class="form-row-split">
             <div class="form-group">
-                <label>Width Input Mode:</label>
-                <select id="cylinderWidthMode">
-                    <option value="diameter" selected>Target Diameter</option>
-                    <option value="stitches">Max Stitches</option>
+                <div class="label-row">
+                    <label>Hook Size (mm):</label>
+                    <button type="button" class="info-link" onclick="openModal('hookModal')">Amigurumi Yarn & Hook Guide</button>
+                </div>
+                <input type="number" id="hookSize" value="3.0" min="0.5" max="35.0" step="0.5">
+            </div>
+
+            <div class="form-group">
+                <div class="label-row">
+                    <label>Yarn Weight:</label>
+                    <button type="button" class="info-link" onclick="openModal('yarnModal')">What are Yarn Weights?</button>
+                </div>
+                <select id="yarnWeight">
+                    <option value="fingering">Fingering</option>
+                    <option value="sport">Sport</option>
+                    <option value="dk" selected>DK</option>
+                    <option value="worsted">Worsted</option>
+                    <option value="bulky">Bulky</option>
+                    <option value="super_bulky">Super Bulky</option>
                 </select>
             </div>
-            <div class="form-group" id="cylinderDiamGroup">
-                <label id="cylinderDiamLabel">Target Diameter (inches):</label>
-                <input type="number" id="cylinderDiameter" value="3.0" min="1" max="100.0" step="0.5">
-            </div>
-            <div class="form-group" id="cylinderStitchGroup">
-                <label id="cylinderStitchLabel">Max Stitches (e.g., 24, 30):</label>
-                <input type="number" id="cylinderStitches" value="30" min="6" max="6000" step="6" disabled>
-            </div>
-
-            <hr style="border:0; border-top:1px solid #cbd5e1; margin: 20px 0;">
-
-            <!-- Height Input Mode -->
-            <div class="form-group">
-                <label>Height Input Mode:</label>
-                <select id="cylinderHeightMode">
-                    <option value="height" selected>Target Height</option>
-                    <option value="rows">Total Rows</option>
-                </select>
-            </div>
-            <div class="form-group" id="cylinderHeightGroup">
-                <label id="cylinderHeightLabel">Target Height (inches):</label>
-                <input type="number" id="cylinderHeight" value="5.0" min="1" max="100.0" step="0.5">
-            </div>
-            <div class="form-group" id="cylinderRowsGroup">
-                <label id="cylinderRowsLabel">Total Rows (e.g., 10, 15):</label>
-                <input type="number" id="cylinderRows" value="12" min="6" max="6000" step="1" disabled>
-            </div>
-
         </div>
-    </div>
 
-    <!-- 3. Cylinder Configuration Options -->
-    <div class="form-group">
-        <div class="label-row">
-            <label>Ends Configuration:</label>
-            <button type="button" class="info-link" onclick="openModal('endsModal')">Closed or Open Cylinder?</button>
+        <!-- 3. Cylinder-Specific Fields Container -->
+        <div id="shapeFields" class="conditional-fields">
+            <div id="cylinderFields" class="shape-input-group">
+
+                <!-- Row 1: Width Selection Side-by-Side -->
+                <div class="form-row-split">
+                    <div class="form-group">
+                        <label>Cylinder Width Mode</label>
+                        <select id="cylinderWidthMode">
+                            <option value="diameter" selected>Measurement of Diameter</option>
+                            <option value="stitches">Max # of Diameter Stitches</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="cylinderDiamGroup">
+                        <label id="cylinderDiamLabel">Target Diameter (inches):</label>
+                        <input type="number" id="cylinderDiameter" value="3.0" min="1" max="100.0" step="0.5">
+                    </div>
+
+                    <div class="form-group" id="cylinderStitchGroup" style="display: none;">
+                        <label id="cylinderStitchLabel">Target Equator Stitches:</label>
+                        <input type="number" id="cylinderStitches" value="24" min="6" max="6000" step="6">
+                    </div>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 15px 0;">
+
+                <!-- Row 2: Height Selection Side-by-Side -->
+                <div class="form-row-split">
+                    <div class="form-group">
+                        <label>Cylinder Height Mode</label>
+                        <select id="cylinderHeightMode">
+                            <option value="height" selected>Measurement of Height</option>
+                            <option value="rows">Max # of Height Rounds</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="cylinderHeightGroup">
+                        <label id="cylinderHeightLabel">Target Height (inches):</label>
+                        <input type="number" id="cylinderHeight" value="4.0" min="1" max="100.0" step="0.5">
+                    </div>
+
+                    <div class="form-group" id="cylinderRowsGroup" style="display: none;">
+                        <label id="cylinderRowsLabel">Total Height Rounds:</label>
+                        <input type="number" id="cylinderRows" value="10" min="1" max="1000" step="1">
+                    </div>
+                </div>
+
+            </div>
         </div>
-        <select id="cylinderEnds">
-            <option value="closed" selected>Closed (Both ends capped)</option>
-            <option value="open">Open (One end capped)</option>
-        </select>
+
+        <!-- 4. Bottom Collapsible: Open/Closed & Stuffing (Split Row) -->
+                <details class="advanced-settings">
+                    <summary>Cylinder Ends & Stuffing</summary>
+                    <div class="nested-fields form-row-split">
+                        <div class="form-group">
+                            <div class="label-row">
+                                <label>Cylinder Ends:</label>
+                                <button type="button" class="info-link" onclick="openModal('cylinderEndsModal')">Open vs. Closed Guide</button>
+                            </div>
+                            <select id="cylinderEnds">
+                                <option value="closed" selected>Closed (Flat bottom / top closure)</option>
+                                <option value="open">Open (Tube / Limb sleeve)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="label-row">
+                                <label>What type of stuffing?</label>
+                                <button type="button" class="info-link" onclick="openModal('stuffingModal')">Stuffing Type Guide</button>
+                            </div>
+                            <select id="stuffingOpt">
+                                <option value="yes" selected>Yes (Standard Poly-Fil)</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                    </div>
+                </details>
+
+        <button id="generateBtn" type="button" class="generate-btn" onclick="generatePattern()">Generate Pattern</button>
     </div>
 
-    <div class="form-group">
-        <label>Add Stuffing Instructions?</label>
-        <select id="stuffingOpt">
-            <option value="yes" selected>Yes</option>
-            <option value="no">No</option>
-        </select>
-    </div>
-
-    <button id="generateBtn" type="button" class="generate-btn" onclick="generateCylinderPattern()">Generate Cylinder Pattern</button>
-
-    <!-- Results Container -->
-    <div id="outputResults" style="margin-top: 20px;"></div>
+    <div id="outputResults"></div>
 
     <!-- MODAL POPUPS -->
     <!-- 1. Cylinder Uses Modal -->
@@ -129,17 +150,18 @@
         <div class="modal-card">
             <button class="modal-close" onclick="closeModal('cylinderModal')">&times;</button>
             <h3>Why make a cylinder?</h3>
-            <p>The cylinder shape is one of the foundational building blocks of amigurumi crochet, used to construct the core structure and functional parts of toys, dolls, and miniature objects.</p>
+            <p>The cylinder is the second most essential shape in amigurumi construction. While spheres make great heads and rounded bodies, cylinders form the structural backbone for limbs, necks, torsos, and specialized accessories.</p>
             <p><button type="button" class="info-link" onclick="toggleCylinderIdeas()" id="cylinderIdeasToggle">Need Ideas? ▼</button></p>
             <div id="cylinderIdeasContent" style="display: none; margin-top: 10px;">
-                <h4>Main Purposes of a Cylinder in Amigurumi</h4>
+                <h4>Classic & Primary Uses</h4>
+                <p><strong>Amigurumi Limbs & Features:</strong></p>
                 <ul>
-                    <li><strong>Limbs and Appendages:</strong> They are the standard shape for arms, legs, paws, and hooves because of their narrow, straight, or gently curved tube form.</li>
-                    <li><strong>Bodies and Torsos:</strong> Wider cylinders form the main trunk or body of animal figures, dolls, and creatures.</li>
-                    <li><strong>Necks and Connectors:</strong> Short, narrow cylinders serve as the neck that bridges a spherical head to a body.</li>
-                    <li><strong>Tails and Snouts:</strong> Long or tapered cylinders make flexible tails, snouts, horns, or ears.</li>
-                    <li><strong>Props and Accessories:</strong> Because cylinders can stand on their own or hold a hollow structure, they are ideal for crafting miniature hats, cups, barrels, baskets, plant pots, and pencil holders.</li>
-                    <li><strong>Finger Puppets:</strong> Small open-ended cylinder tubes are built specifically as the base for finger puppets.</li>
+                    <li><strong>Arms, Legs, and Tails:</strong> Straight or slightly tapered tubes form animal legs, doll arms, tails, and tentacles.</li>
+                    <li><strong>Necks & Torsos:</strong> Long or stout cylindrical sections build structural necks and main bodies for standing figures.</li>
+                </ul>
+                <p><strong>Clothing & Accessories:</strong></p>
+                <ul>
+                    <li>Sweater sleeves, wizard hats, tree trunks, plant stems, or cylindrical mugs and bottles.</li>
                 </ul>
             </div>
         </div>
@@ -150,7 +172,7 @@
         <div class="modal-card">
             <button class="modal-close" onclick="closeModal('yarnModal')">&times;</button>
             <h3>What are Yarn Weights?</h3>
-            <p>US System uses numbers (0-7) and descriptive terms (Fingering, Worsted, Bulky). UK/AU/NZ System frequently uses "Ply" (e.g., 4-ply, 8-ply). Note: In modern manufacturing, "ply" refers to thickness class, not literal strands.</p>
+            <p>US System uses numbers (0-7) and descriptive terms (Fingering, Worsted, Bulky). UK/AU/NZ System frequently uses "Ply" (e.g., 4-ply, 8-ply).</p>
             <table>
                 <tr>
                     <th>Standard # | Category Name</th>
@@ -158,67 +180,266 @@
                     <th>Typical Crochet Hook Size</th>
                     <th>Common Uses</th>
                 </tr>
+                <tr><td>0 | Lace</td><td>Thread, Cobweb</td><td>1.4 mm - 2.25 mm</td><td>Micro-amigurumi, lace.</td></tr>
+                <tr><td>1 | Super Fine</td><td>Fingering, Sock</td><td>2.25 mm - 3.5 mm</td><td>Socks, light garments.</td></tr>
+                <tr><td>2 | Fine</td><td>Sport</td><td>3.5 mm - 4.5 mm</td><td>Light sweaters, accessories.</td></tr>
+                <tr><td>3 | Light</td><td>DK, Light Worsted</td><td>4.5 mm - 5.5 mm</td><td>Sweaters, baby blankets, amigurumi.</td></tr>
+                <tr><td>4 | Medium</td><td>Worsted, Aran</td><td>5.5 mm - 6.5 mm</td><td>Standard workhorse: blankets, amigurumi.</td></tr>
+                <tr><td>5 | Bulky</td><td>Chunky, Craft</td><td>6.5 mm - 9.0 mm</td><td>Warm hats, fast plushies.</td></tr>
+                <tr><td>6 | Super Bulky</td><td>Super Chunky</td><td>9.0 mm - 15.0 mm</td><td>Plush velvet toys, thick scarves.</td></tr>
+                <tr><td>7 | Jumbo</td><td>Giant Plush</td><td>15.0 mm+</td><td>Giant chunky blankets.</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- 3. Hook Size Modal -->
+    <div id="hookModal" class="modal-overlay">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModal('hookModal')">&times;</button>
+            <h3>Amigurumi Yarn & Hook Guide</h3>
+
+            <h4 style="margin-top:15px; color:#2c3e50;">What type of yarn should I use specifically for Amigurumi?</h4>
+            <p>Standard crochet patterns (like blankets or garments) use larger hooks to create a soft, flexible drape. Amigurumi requires a tight, dense fabric so the fiberfill stuffing doesn't poke out through the stitches. The golden rule for amigurumi is to drop 1 to 3 hook sizes (0.5 mm - 1.5 mm smaller) than what the yarn skein label recommends.</p>
+
+            <h4 style="margin-top:15px; color:#2c3e50;">3 Rules of Thumb for Choosing Your Hook</h4>
+            <ul>
+                <li><strong>Check for "Gapping":</strong> If you stuff your piece and can see white stuffing poking between your single crochet stitches, drop down 0.5 mm in hook size.</li>
+                <li><strong>Yarn Fiber Matters:</strong>
+                    <ul>
+                        <li><em>100% Cotton:</em> Zero stretch. You can stick closer to a 3.0 mm – 3.5 mm hook for worsted weight.</li>
+                        <li><em>Acrylic:</em> Slight give/stretch. Usually pairs best with a 3.5 mm – 4.0 mm hook for worsted weight.</li>
+                        <li><em>Chenille / Velvet Yarns:</em> Notoriously tricky because pulling stitches too tight can cause "snagging" or breaking the core thread. Using a 5.0 mm – 6.5 mm hook is usually the sweet spot to keep it plush without losing shape.</li>
+                    </ul>
+                </li>
+                <li><strong>Stitch Tension & Style:</strong> If you use the "Yarn Under, Yarn Over" (X-stitch) method instead of standard "Yarn Over, Yarn Over" (V-stitch), your stitches naturally sit tighter, allowing you to use a slightly larger hook while keeping the fabric dense.</li>
+            </ul>
+
+            <h4 style="margin-top:20px; color:#2c3e50;">What hook should I use specifically for Amigurumi?</h4>
+            <table>
                 <tr>
-                    <td>0 | Lace</td>
-                    <td>Thread, Cobweb, Light Fingering</td>
-                    <td>1.4 mm - 2.25 mm</td>
-                    <td>Delicate doilies, airy lace shawls, micro-amigurumi.</td>
+                    <th>Yarn Weight Category</th>
+                    <th>Recommended Amigurumi Hook Size</th>
+                    <th>Common Yarn Types for Amigurumi</th>
                 </tr>
                 <tr>
-                    <td>1 | Super Fine</td>
-                    <td>Fingering, Sock, Baby (UK: 4-Ply)</td>
-                    <td>2.25 mm - 3.5 mm</td>
-                    <td>Socks, lightweight shawls, baby garments.</td>
+                    <td>#1 Super Fine / Fingering</td>
+                    <td>1.5 mm - 2.25 mm (Steel Hooks or B-1)</td>
+                    <td>Micro-amigurumi, crochet thread, lace-weight cotton</td>
                 </tr>
                 <tr>
-                    <td>2 | Fine</td>
-                    <td>Sport, Baby (UK: 5-Ply)</td>
-                    <td>3.5 mm - 4.5 mm</td>
-                    <td>Light sweaters, spring garments, detailed accessories.</td>
+                    <td>#2 Fine / Sport</td>
+                    <td>2.0 mm - 2.75 mm (B-1 to C-2)</td>
+                    <td>Detailed mini plushies, 4-ply cotton/acrylic blends</td>
                 </tr>
                 <tr>
-                    <td>3 | Light</td>
-                    <td>DK (Double Knitting), Light Worsted (UK: 8-Ply)</td>
-                    <td>4.5 mm - 5.5 mm</td>
-                    <td>Sweaters, baby blankets, lightweight hats, amigurumi.</td>
+                    <td>#3 Light / DK</td>
+                    <td>2.5 mm - 3.25 mm (C-2 to D-3)</td>
+                    <td>Fine detail amigurumi, Ricorumi, Paintbox DK</td>
                 </tr>
                 <tr>
-                    <td>4 | Medium</td>
-                    <td>Worsted, Aran, Afghan (UK: 10-Ply)</td>
-                    <td>5.5 mm - 6.5 mm</td>
-                    <td>The standard workhorse: blankets, sweaters, hats, standard amigurumi.</td>
+                    <td>#4 Medium / Worsted</td>
+                    <td>3.25 mm - 4.0 mm (D-3 to G-6)</td>
+                    <td>The Classic Workhorse: Red Heart Super Saver, Impeccable, Caron Simply Soft</td>
                 </tr>
                 <tr>
-                    <td>5 | Bulky</td>
-                    <td>Chunky, Craft, Rug (UK: 12-Ply)</td>
-                    <td>6.5 mm - 9.0 mm</td>
-                    <td>Warm hats, thick cowls, fast plushies, floor baskets.</td>
+                    <td>#5 Bulky</td>
+                    <td>4.5 mm - 5.5 mm (H-8 to I-9)</td>
+                    <td>Chunky acrylics, lightweight chenille</td>
                 </tr>
                 <tr>
-                    <td>6 | Super Bulky</td>
-                    <td>Super Chunky, Roving</td>
-                    <td>9.0 mm - 15.0 mm</td>
-                    <td>Quick blankets, plush velvet toys, thick winter scarves.</td>
+                    <td>#6 Super Bulky</td>
+                    <td>6.0 mm - 8.0 mm (J-10 to L-11)</td>
+                    <td>Plush velvet yarns (e.g., Premier Parfait Chunky, Sweet Snuggles)</td>
                 </tr>
                 <tr>
-                    <td>7 | Jumbo</td>
-                    <td>Roving, Giant Plush</td>
-                    <td>15.0 mm+ (or Arm Knitting)</td>
-                    <td>Heavy chunky blankets, oversized poufs.</td>
+                    <td>#7 Jumbo</td>
+                    <td>9.0 mm - 12.0 mm (M-13 to N-15)</td>
+                    <td>Giant plushies, Bernat Blanket Extra</td>
                 </tr>
             </table>
         </div>
     </div>
 
-    <!-- 3. Hook Size / Amigurumi Guide Modal -->
-    <div id="hookModal" class="modal-overlay">
+    <!-- 4. Stuffing Type Modal -->
+    <div id="stuffingModal" class="modal-overlay">
         <div class="modal-card">
-            <button class="modal-close" onclick="closeModal('hookModal')">&times;</button>
-            <h3>Amigurumi Yarn & Hook Guide</h3>
-            <p>For amigurumi, you generally want to use a hook size **smaller** than what the yarn label recommends. This creates tight stitches that prevent the polyester stuffing from showing through.</p>
+            <button class="modal-close" onclick="closeModal('stuffingModal')">&times;</button>
+            <h3>Stuffing Types Guide</h3>
+            <table>
+                <tr>
+                    <th>Stuffing Type</th>
+                    <th>Best For</th>
+                    <th>Pros</th>
+                    <th>Cons</th>
+                </tr>
+                <tr>
+                    <td><strong>Polyester Fiberfill (Poly-Fil)</strong></td>
+                    <td>Standard choice for almost all amigurumi</td>
+                    <td>
+                        • Inexpensive and widely available<br>
+                        • Machine washable & quick-drying<br>
+                        • Hypoallergenic & lightweight<br>
+                        • Good bounce-back (resilient)
+                    </td>
+                    <td>
+                        • Can clump over time if low quality<br>
+                        • Can show/poke through loose stitches
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>100% Cotton Stuffing</strong></td>
+                    <td>Natural, eco-friendly, or organic toys</td>
+                    <td>
+                        • 100% natural and biodegradable<br>
+                        • Provides a firmer, denser, and heavier feel
+                    </td>
+                    <td>
+                        • Retains moisture (slow drying, risk of mold)<br>
+                        • Packs down over time and loses fluffiness<br>
+                        • More expensive & harder to find
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Wool Stuffing</strong></td>
+                    <td>High-end or Waldorf-style handcrafted dolls</td>
+                    <td>
+                        • Natural, breathable, and warm<br>
+                        • Holds firm shapes exceptionally well<br>
+                        • Comforting, substantial weight
+                    </td>
+                    <td>
+                        • Not machine washable (will felt and shrink)<br>
+                        • Can trigger wool allergies<br>
+                        • Susceptible to moths; expensive
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Fabric Scraps & Yarn Ends</strong></td>
+                    <td>Zero-waste projects & weighted bases</td>
+                    <td>
+                        • 100% free and eco-friendly<br>
+                        • Great for adding weight to the bottom of toys
+                    </td>
+                    <td>
+                        • Can create a bumpy or lumpy finish<br>
+                        • Hard to distribute evenly around smooth curves
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Poly Pellets / Glass Beads</strong></td>
+                    <td>Adding sitting weight to bases (used <em>with</em> fiberfill)</td>
+                    <td>
+                        • Gives toys a weighted, self-sitting base<br>
+                        • Excellent stability for posture
+                    </td>
+                    <td>
+                        • Severe choking hazard if unbagged<br>
+                        • Must be placed inside a sealed inner pouch<br>
+                        • Not suitable for stuffing whole toys
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
 
+    <!-- 6. Cylinder Ends / Tubes Guide Modal -->
+        <div id="cylinderEndsModal" class="modal-overlay">
+            <div class="modal-card">
+                <button class="modal-close" onclick="closeModal('cylinderEndsModal')">&times;</button>
+                <h3>Cylinder Ends Guide: Open vs. Closed</h3>
+                <p>Choosing whether your cylinder is open or closed depends entirely on how it connects to your project or if it functions as an independent standalone piece.</p>
+                <table>
+                    <tr>
+                        <th>Cylinder Type</th>
+                        <th>Best Used For</th>
+                        <th>Construction Details</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Closed (Flat Bottom / Top Closure)</strong></td>
+                        <td>
+                            • Standing doll legs and feet<br>
+                            • Solid animal torsos or snouts<br>
+                            • Standalone cylindrical items (mugs, pillars, stems)
+                        </td>
+                        <td>
+                            Starts with a flat circular base (or magic ring increase rounds) and finishes with a seamless decrease round to completely close off the top or bottom.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Open (Tube / Limb Sleeve)</strong></td>
+                        <td>
+                            • Sleeves for clothing or costumes<br>
+                            • Tentacles, floppy arms, or hollow handles<br>
+                            • Connecting directly into a body opening (no sewn-on base needed)
+                        </td>
+                        <td>
+                            Worked straight in continuous rounds from a starting chain or ring without any starting or ending decrease caps, leaving both ends open as a hollow tube.
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    <!-- Script Logic -->
     <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const widthModeSelect = document.getElementById('cylinderWidthMode');
+            if (widthModeSelect) {
+                widthModeSelect.addEventListener('change', toggleCylinderWidthMode);
+            }
+
+            const heightModeSelect = document.getElementById('cylinderHeightMode');
+            if (heightModeSelect) {
+                heightModeSelect.addEventListener('change', toggleCylinderHeightMode);
+            }
+
+            const unitSystemSelect = document.getElementById('unitSystem');
+            if (unitSystemSelect) {
+                unitSystemSelect.addEventListener('change', updateCylinderUnits);
+            }
+        });
+
+        function toggleCylinderWidthMode() {
+            const mode = document.getElementById('cylinderWidthMode').value;
+            const diamGroup = document.getElementById('cylinderDiamGroup');
+            const stitchGroup = document.getElementById('cylinderStitchGroup');
+
+            if (mode === 'diameter') {
+                diamGroup.style.display = 'block';
+                stitchGroup.style.display = 'none';
+            } else {
+                diamGroup.style.display = 'none';
+                stitchGroup.style.display = 'block';
+            }
+        }
+
+        function toggleCylinderHeightMode() {
+            const mode = document.getElementById('cylinderHeightMode').value;
+            const heightGroup = document.getElementById('cylinderHeightGroup');
+            const rowsGroup = document.getElementById('cylinderRowsGroup');
+
+            if (mode === 'height') {
+                heightGroup.style.display = 'block';
+                rowsGroup.style.display = 'none';
+            } else {
+                heightGroup.style.display = 'none';
+                rowsGroup.style.display = 'block';
+            }
+        }
+
+        function updateCylinderUnits() {
+            const unit = document.getElementById('unitSystem').value;
+            const diamLabel = document.getElementById('cylinderDiamLabel');
+            const heightLabel = document.getElementById('cylinderHeightLabel');
+
+            if (diamLabel) {
+                diamLabel.textContent = `Target Diameter (${unit === 'imperial' ? 'inches' : 'cm'}):`;
+            }
+            if (heightLabel) {
+                heightLabel.textContent = `Target Height (${unit === 'imperial' ? 'inches' : 'cm'}):`;
+            }
+        }
+    </script>
 </body>
 </html>

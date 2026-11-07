@@ -142,32 +142,32 @@ function toggleSphereInputMode() {
 
 function toggleCylinderWidthMode() {
     const mode = document.getElementById('cylinderWidthMode').value;
-    const diamInput = document.getElementById('cylinderDiameter');
-    const stitchInput = document.getElementById('cylinderStitches');
+    const diamGroup = document.getElementById('cylinderDiamGroup');
+    const stitchGroup = document.getElementById('cylinderStitchGroup');
 
-    if (diamInput && stitchInput) {
+    if (diamGroup && stitchGroup) {
         if (mode === 'diameter') {
-            diamInput.disabled = false;
-            stitchInput.disabled = true;
+            diamGroup.style.display = 'block';
+            stitchGroup.style.display = 'none';
         } else {
-            diamInput.disabled = true;
-            stitchInput.disabled = false;
+            diamGroup.style.display = 'none';
+            stitchGroup.style.display = 'block';
         }
     }
 }
 
 function toggleCylinderHeightMode() {
     const mode = document.getElementById('cylinderHeightMode').value;
-    const heightInput = document.getElementById('cylinderHeight');
-    const rowsInput = document.getElementById('cylinderRows');
+    const heightGroup = document.getElementById('cylinderHeightGroup');
+    const rowsGroup = document.getElementById('cylinderRowsGroup');
 
-    if (heightInput && rowsInput) {
+    if (heightGroup && rowsGroup) {
         if (mode === 'height') {
-            heightInput.disabled = false;
-            rowsInput.disabled = true;
+            heightGroup.style.display = 'block';
+            rowsGroup.style.display = 'none';
         } else {
-            heightInput.disabled = true;
-            rowsInput.disabled = false;
+            heightGroup.style.display = 'none';
+            rowsGroup.style.display = 'block';
         }
     }
 }
@@ -239,7 +239,6 @@ async function generateCylinderPattern() {
     const yarn = document.getElementById('yarnWeight').value;
     const hook = document.getElementById('hookSize').value;
 
-    // Safely check if cylinderEnds exists, fallback to closed if missing
     const endsElement = document.getElementById('cylinderEnds');
     const endsVal = endsElement ? endsElement.value : 'closed';
 
