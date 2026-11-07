@@ -141,6 +141,25 @@ button.generate-btn:hover {
     background-color: var(--primary-hover);
 }
 
+/* Print / PDF Button Styling */
+button.print-btn {
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s ease;
+}
+
+button.print-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
 .conditional-fields {
     background: #faf9fb;
     padding: 15px;
@@ -196,8 +215,38 @@ button.generate-btn:hover {
 }
 
 .pattern-list li {
-    padding: 8px 12px;
+    padding: 10px 14px;
     border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.pattern-list li:hover {
+    background-color: #faf9fb;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.row-checkbox {
+    margin-top: 4px; /* Aligns checkbox neatly with the first line of text */
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary-color); /* Matches your dusty lavender theme! */
+}
+
+/* Style for completed / checked-off rows */
+.pattern-list li.completed span {
+    text-decoration: line-through;
+    opacity: 0.4;
+}
+
+.pattern-list li.completed {
+    background-color: #f0edf3;
 }
 
 .pattern-list li:nth-child(even) {
@@ -272,4 +321,34 @@ button.generate-btn:hover {
 .modal-card th {
     background-color: #faf9fb;
     color: var(--text-color);
+}
+
+@media print {
+    /* Hide navigation, form inputs, buttons, and print links when printing */
+    .nav-links,
+    .generator-form,
+    button,
+    .info-link {
+        display: none !important;
+    }
+
+    body {
+        background-color: #ffffff;
+        color: #000000;
+        max-width: 100%;
+        margin: 0;
+        padding: 15px;
+    }
+
+    #outputResults {
+        box-shadow: none;
+        border: none;
+        padding: 0;
+        margin-top: 0;
+    }
+
+    .pattern-list li {
+        page-break-inside: avoid;
+        border-bottom: 1px solid #ccc;
+    }
 }

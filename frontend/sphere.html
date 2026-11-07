@@ -114,8 +114,13 @@
                     </div>
                 </details>
 
-        <button id="generateBtn" type="button" class="generate-btn" onclick="generatePattern()">Generate Pattern</button>
-    </div>
+                <button id="generateBtn" type="button" class="generate-btn" onclick="generatePattern()">Generate Pattern</button>
+
+                        <!-- Print / PDF Export Button -->
+                        <div style="text-align: center; margin-top: 12px;">
+                            <button type="button" class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+                        </div>
+                    </div>
 
     <div id="outputResults"></div>
 
@@ -406,97 +411,5 @@
 
     <!-- Script Logic -->
     <script src="script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const generateBtn = document.getElementById('generateBtn');
-            if (generateBtn) {
-                generateBtn.addEventListener('click', generatePattern);
-            }
-
-            const unitSystemSelect = document.getElementById('unitSystem');
-            if (unitSystemSelect) {
-                unitSystemSelect.addEventListener('change', updateUnits);
-            }
-
-            const sphereInputModeSelect = document.getElementById('sphereInputMode');
-            if (sphereInputModeSelect) {
-                sphereInputModeSelect.addEventListener('change', toggleSphereInputMode);
-            }
-        });
-
-        function toggleSphereInputMode() {
-            const mode = document.getElementById('sphereInputMode').value;
-            const diamGroup = document.getElementById('sphereDiamGroup');
-            const stitchGroup = document.getElementById('sphereStitchGroup');
-
-            if (mode === 'diameter') {
-                diamGroup.style.display = 'block';
-                stitchGroup.style.display = 'none';
-            } else {
-                diamGroup.style.display = 'none';
-                stitchGroup.style.display = 'block';
-            }
-        }
-
-        async function generatePattern() {
-            const unit = document.getElementById('unitSystem').value;
-            const yarn = document.getElementById('yarnWeight').value;
-            const hook = document.getElementById('hookSize').value;
-            const safetyOpt = document.getElementById('safetyEyesOpt').value;
-            const stuffingOpt = document.getElementById('stuffingOpt').value;
-
-            let queryParams = `?yarn_weight=${encodeURIComponent(yarn)}&hook_size_mm=${encodeURIComponent(hook)}&safety_eyes=${encodeURIComponent(safetyOpt)}&stuffing=${encodeURIComponent(stuffingOpt)}`;
-
-            const mode = document.getElementById('sphereInputMode').value;
-            if (mode === 'diameter') {
-                const val = document.getElementById('sphereDiameter').value;
-                queryParams += unit === 'imperial' ? `&max_diameter_inches=${val}` : `&max_diameter_cm=${val}`;
-            } else {
-                const stitches = document.getElementById('sphereStitches').value;
-                queryParams += `&max_stitches=${stitches}`;
-            }
-
-            const url = `http://127.0.0.1:8000/sphere/${queryParams}`;
-
-            const outputDiv = document.getElementById('outputResults');
-            outputDiv.innerHTML = "<p>Generating your custom pattern...</p>";
-
-            try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    const errData = await response.json();
-                    throw new Error(errData.detail || "Failed to generate pattern.");
-                }
-                const data = await response.json();
-
-                let sizeVal = unit === 'imperial' ? data.dimensions.diameter_inches : data.dimensions.diameter_cm;
-                let sizeStr = `${sizeVal} ${unit === 'imperial' ? 'inches' : 'cm'}`;
-
-                let html = `<h3>Pattern Specifications</h3>`;
-                html += `<div class="metrics-card">`;
-                html += `<p><strong>Total Rounds:</strong> ${data.total_rounds}</p>`;
-                html += `<p><strong>Finished Diameter:</strong> ~${sizeStr}</p>`;
-                html += `<p><strong>Supplies You Need:</strong></p>`;
-                html += `<ul class="supplies-list">`;
-                html += `<li><strong>Estimated Yarn:</strong> ${data.supplies_you_need.estimated_yarn}</li>`;
-                html += `<li><strong>Hook:</strong> ${data.supplies_you_need.hook}</li>`;
-                html += `<li><strong>Safety Eyes:</strong> ${data.supplies_you_need.safety_eyes}</li>`;
-                html += `<li><strong>Stuffing:</strong> ${data.supplies_you_need.stuffing_volume}</li>`;
-                html += `</ul>`;
-                html += `</div>`;
-
-                html += `<h3>Round-by-Round Instructions</h3><ul class="pattern-list">`;
-                data.pattern.forEach(step => {
-                    html += `<li>${step.instruction}</li>`;
-                });
-                html += `</ul>`;
-
-                outputDiv.innerHTML = html;
-            } catch (error) {
-                console.error('Error:', error);
-                outputDiv.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
-            }
-        }
-    </script>
 </body>
 </html>

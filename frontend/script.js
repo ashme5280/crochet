@@ -219,14 +219,38 @@ async function generatePattern() {
         html += `<li><strong>Stuffing:</strong> ${data.supplies_you_need.stuffing_volume}</li>`;
         html += `</ul>`;
         html += `</div>`;
+        html += `<h3>Round-by-Round Instructions</h3><ul class="pattern-list" id="patternList">`;
 
-        html += `<h3>Round-by-Round Instructions</h3><ul class="pattern-list">`;
-        data.pattern.forEach(step => {
-            html += `<li>${step.instruction}</li>`;
+        data.pattern.forEach((step, index) => {
+            const instructionText = typeof step === 'string' ? step : step.instruction;
+            const stuffingText = step.stuffing_instruction || '';
+
+            html += `<li data-index="${index}">`;
+            html += `<label class="checkbox-label">`;
+            html += `<input type="checkbox" class="row-checkbox"> `;
+            html += `<span>${instructionText}</span>`;
+            html += `</label>`;
+            if (stuffingText) {
+                html += `<div style="color: #64748b; font-size: 0.9em; margin-top: 2px; margin-left: 24px;">💡 ${stuffingText}</div>`;
+            }
+            html += `</li>`;
         });
         html += `</ul>`;
 
         outputDiv.innerHTML = html;
+
+        // --- Interactive Checkbox Strikethrough Effect ---
+        const checkboxes = outputDiv.querySelectorAll('.row-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', (e) => {
+                const listItem = e.target.closest('li');
+                if (e.target.checked) {
+                    listItem.classList.add('completed');
+                } else {
+                    listItem.classList.remove('completed');
+                }
+            });
+        });
     } catch (error) {
         console.error('Error:', error);
         outputDiv.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
@@ -295,21 +319,39 @@ async function generateCylinderPattern() {
         html += `<ul class="supplies-list">`;
         html += `<li><strong>Estimated Yarn:</strong> ${data.supplies_you_need.estimated_yarn}</li>`;
         html += `<li><strong>Hook:</strong> ${data.supplies_you_need.hook}</li>`;
-        html += `<li><strong>Stuffing Needed:</strong> ${data.supplies_you_need.stuffing_volume}</li>`;
+        html += `<li><strong>Stuffing Needed:</strong> ${data.supplies_you_need.supplies_you_need?.stuffing_volume || data.supplies_you_need.stuffing_volume}</li>`;
         html += `</ul>`;
         html += `</div>`;
 
-        html += `<h3>Round-by-Round Instructions</h3><ul class="pattern-list">`;
-        data.pattern.forEach(step => {
-            html += `<li>${step.instruction}`;
+        html += `<h3>Round-by-Round Instructions</h3><ul class="pattern-list" id="cylinderPatternList">`;
+        data.pattern.forEach((step, index) => {
+            html += `<li data-index="${index}">`;
+            html += `<label class="checkbox-label">`;
+            html += `<input type="checkbox" class="row-checkbox"> `;
+            html += `<span>${step.instruction}</span>`;
+            html += `</label>`;
             if (step.stuffing_instruction) {
-                html += `<div style="color: #64748b; font-size: 0.9em; margin-top: 2px;">💡 ${step.stuffing_instruction}</div>`;
+                html += `<div style="color: #64748b; font-size: 0.9em; margin-top: 2px; margin-left: 24px;">💡 ${step.stuffing_instruction}</div>`;
             }
             html += `</li>`;
         });
         html += `</ul>`;
 
         outputDiv.innerHTML = html;
+
+        // --- Interactive Checkbox Strikethrough Effect for Cylinder ---
+        const checkboxes = outputDiv.querySelectorAll('.row-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', (e) => {
+                const listItem = e.target.closest('li');
+                if (e.target.checked) {
+                    listItem.classList.add('completed');
+                } else {
+                    listItem.classList.remove('completed');
+                }
+            });
+        });
+
     } catch (error) {
         console.error('Error:', error);
         outputDiv.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
