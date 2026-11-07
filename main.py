@@ -28,5 +28,5 @@ app.include_router(oval.router)
 app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
 
 @app.get("/")
-def read_root():
-    return {"status": "online", "message": "Amigurumi Pattern Generator API is running!"}
+def read_index():
+    return FileResponse("frontend/index.html")

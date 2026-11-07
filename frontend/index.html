@@ -1,6 +1,6 @@
-<body>
-
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Amigurumi Pattern Generator</title>
@@ -23,10 +23,27 @@
         .form-group {
             margin-bottom: 15px;
         }
-        label {
-            display: block;
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 5px;
+        }
+        label {
             font-weight: 600;
+        }
+        .info-link {
+            background: none;
+            border: none;
+            color: #4f46e5;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 0;
+            text-decoration: underline;
+        }
+        .info-link:hover {
+            color: #4338ca;
         }
         select, input {
             width: 100%;
@@ -36,7 +53,12 @@
             font-size: 16px;
             box-sizing: border-box;
         }
-        button {
+        input:disabled, select:disabled {
+            background-color: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+        button.generate-btn {
             background-color: #4f46e5;
             color: white;
             border: none;
@@ -48,7 +70,7 @@
             width: 100%;
             margin-top: 10px;
         }
-        button:hover {
+        button.generate-btn:hover {
             background-color: #4338ca;
         }
         .conditional-fields {
@@ -69,18 +91,10 @@
             border-radius: 8px;
             margin-bottom: 20px;
         }
-        .stuffing-tip {
-            background: #eef2ff;
-            border-left: 4px solid #4f46e5;
-            padding: 12px 15px;
-            border-radius: 6px;
-            margin-bottom: 20px;
+        .supplies-list {
+            margin: 8px 0 0 20px;
+            padding: 0;
             font-size: 14px;
-            color: #312e81;
-        }
-        .stuffing-tip strong {
-            display: block;
-            margin-bottom: 2px;
         }
         .pattern-list {
             list-style-type: none;
@@ -93,25 +107,85 @@
         .pattern-list li:nth-child(even) {
             background-color: #f9fafb;
         }
+
+        /* Modal Popup Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-overlay.active {
+            display: flex !important;
+        }
+        .modal-card {
+            background: #ffffff;
+            width: 90%;
+            max-width: 650px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #666;
+        }
+        .modal-close:hover {
+            color: #000;
+        }
+        .modal-card h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .modal-card table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+        .modal-card th, .modal-card td {
+            border: 1px solid #e2e8f0;
+            padding: 8px;
+            text-align: left;
+        }
+        .modal-card th {
+            background-color: #f8fafc;
+        }
     </style>
-
-
+</head>
+<body>
 
     <h2>Amigurumi Pattern Generator</h2>
 
-    <!-- 1. Unit System Selection -->
+    <!-- 1. Universal Settings -->
     <div class="form-group">
         <label>Unit System:</label>
-        <select id="unitSystem" onchange="updateUnits()">
+        <select id="unitSystem">
             <option value="imperial" selected>Inches</option>
             <option value="metric">Centimeters</option>
         </select>
     </div>
 
-    <!-- 2. Shape, Yarn, & Hook Size -->
+    <!-- 2. Shape Selection -->
     <div class="form-group">
-        <label>Shape:</label>
-        <select id="shapeSelect" onchange="toggleShapeFields()">
+        <div class="label-row">
+            <label>Shape:</label>
+            <button type="button" class="info-link" onclick="openModal('sphereModal')">Why make a sphere?</button>
+        </div>
+        <select id="shapeSelect">
             <option value="sphere" selected>Sphere</option>
             <option value="cylinder">Cylinder</option>
             <option value="cone">Cone</option>
@@ -120,29 +194,45 @@
     </div>
 
     <div class="form-group">
-        <label>Yarn Weight:</label>
+        <div class="label-row">
+            <label>Yarn Weight:</label>
+            <button type="button" class="info-link" onclick="openModal('yarnModal')">What are Yarn Weights?</button>
+        </div>
         <select id="yarnWeight">
             <option value="fingering">Fingering</option>
             <option value="sport">Sport</option>
-            <option value="dk">DK</option>
-            <option value="worsted" selected>Worsted</option>
+            <option value="dk" selected>DK</option>
+            <option value="worsted">Worsted</option>
             <option value="bulky">Bulky</option>
             <option value="super_bulky">Super Bulky</option>
         </select>
     </div>
 
     <div class="form-group">
-        <label>Hook Size (mm):</label>
+        <div class="label-row">
+            <label>Hook Size (mm):</label>
+            <button type="button" class="info-link" onclick="openModal('hookModal')">Amigurumi Yarn & Hook Guide</button>
+        </div>
         <input type="number" id="hookSize" value="3.0" step="0.5">
     </div>
 
     <!-- 3. Shape-Specific Fields Container -->
     <div id="shapeFields" class="conditional-fields">
-        <!-- Sphere Fields -->
         <div id="sphereFields" class="shape-input-group">
             <div class="form-group">
+                <label>Input Mode:</label>
+                <select id="sphereInputMode">
+                    <option value="diameter" selected>Target Diameter</option>
+                    <option value="stitches">Max Equator Stitches</option>
+                </select>
+            </div>
+            <div class="form-group" id="sphereDiamGroup">
                 <label id="sphereDiamLabel">Target Diameter (inches):</label>
                 <input type="number" id="sphereDiameter" value="4.0" step="0.5">
+            </div>
+            <div class="form-group" id="sphereStitchGroup">
+                <label id="sphereStitchLabel">Max Equator Stitches (e.g., 36, 42):</label>
+                <input type="number" id="sphereStitches" value="60" step="6" disabled>
             </div>
         </div>
 
@@ -198,133 +288,419 @@
         </div>
     </div>
 
-    <button onclick="generatePattern()">Generate Pattern</button>
+    <!-- 4. Feature Toggles (Safety Eyes & Stuffing) -->
+    <div class="form-group">
+        <div class="label-row">
+            <label>Add Safety Eyes?</label>
+            <button type="button" class="info-link" onclick="openModal('eyesModal')">Safety Eye Sizing Matrix</button>
+        </div>
+        <select id="safetyEyesOpt">
+            <option value="None" selected>None</option>
+            <option value="Standard">Standard</option>
+            <option value="Kawaii/Anime Style">Kawaii / Anime Style</option>
+            <option value="Minimalistic">Minimalistic</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Add Stuffing Instructions?</label>
+        <select id="stuffingOpt">
+            <option value="yes" selected>Yes</option>
+            <option value="no">No</option>
+        </select>
+    </div>
+
+    <button id="generateBtn" type="button" class="generate-btn">Generate Pattern</button>
 
     <div id="outputResults"></div>
 
-<script>
-function updateUnits() {
-    const unit = document.getElementById('unitSystem').value;
-    const unitLabel = unit === 'imperial' ? 'inches' : 'centimeters';
+    <!-- MODAL POPUPS -->
+    <!-- 1. Sphere Uses Modal -->
+    <div id="sphereModal" class="modal-overlay">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModal('sphereModal')">&times;</button>
+            <h3>Why make a sphere?</h3>
+            <p>Crocheting a sphere is probably the most fundamental technique in amigurumi. While making the heads and bodies for stuffed figures is the most common application, the underlying geometry of a crocheted sphere lends itself to a wide variety of practical, and creative uses.</p>
+            <p><button type="button" class="info-link" onclick="toggleSphereIdeas()" id="sphereIdeasToggle">Need Ideas? ▼</button></p>
+            <div id="sphereIdeasContent" style="display: none; margin-top: 10px;">
+                <h4>Classic & Primary Uses</h4>
+                <p><strong>Amigurumi Anatomy:</strong></p>
+                <ul>
+                    <li><strong>Heads & Bodies:</strong> The most frequent use in toy-making. Spheres serve as the base for heads, torsos, or belly sections of animals, dolls, and fantasy creatures.</li>
+                    <li><strong>Limbs & Features:</strong> Small spheres (or hemisphere variations) form paws, snout bases, cheek puffs, tail ends, or rounded ears.</li>
+                </ul>
+                <p><strong>Toys:</strong></p>
+                <ul>
+                    <li>Balls for Children: Hacky sacks, sensory play balls, soft infant rattles (when fitted with an internal rattle box or bell), or colorful play sets.</li>
+                </ul>
 
-    document.getElementById('sphereDiamLabel').innerText = `Target Diameter (${unitLabel}):`;
-    document.getElementById('cylDiamLabel').innerText = `Target Diameter (${unitLabel}):`;
-    document.getElementById('cylHeightLabel').innerText = `Target Height (${unitLabel}):`;
-    document.getElementById('coneBaseLabel').innerText = `Base Diameter (${unitLabel}):`;
-    document.getElementById('coneHeightLabel').innerText = `Target Height (${unitLabel}):`;
-    document.getElementById('ovalLengthLabel').innerText = `Target Length (${unitLabel}):`;
-    document.getElementById('ovalWidthLabel').innerText = `Target Width (${unitLabel}):`;
-}
+                <h4>Decorative & Seasonal Uses</h4>
+                <p><strong>Holiday Ornaments:</strong></p>
+                <ul>
+                    <li>Baubles for Christmas trees, hanging garlands, or autumn pumpkins (by pulling a thread down through the center of an orange sphere to indent the top and bottom).</li>
+                </ul>
+                <p><strong>Home Decor Accents:</strong></p>
+                <ul>
+                    <li><strong>Decorative Bowl Fillers:</strong> Multi-textured or multi-colored yarn spheres arranged in decorative glass bowls or trays.</li>
+                    <li><strong>Botanical Components:</strong> Crocheted cacti, succulents, flower centers, or berries.</li>
+                    <li><strong>Garlands & Mobiles:</strong> Strung together with beads or tassels for nursery ceiling mobiles or wall hangings.</li>
+                </ul>
 
-function toggleShapeFields() {
-    const shape = document.getElementById('shapeSelect').value;
-    document.getElementById('sphereFields').style.display = shape === 'sphere' ? 'block' : 'none';
-    document.getElementById('cylinderFields').style.display = shape === 'cylinder' ? 'block' : 'none';
-    document.getElementById('coneFields').style.display = shape === 'cone' ? 'block' : 'none';
-    document.getElementById('ovalFields').style.display = shape === 'oval' ? 'block' : 'none';
-}
+                <h4>Creative Uses</h4>
+                <p><strong>Stress Relief & Ergonomics:</strong></p>
+                <ul>
+                    <li><strong>Stress Balls:</strong> Stuffed with high-density materials or memory foam scraps to squeeze for hand therapy and stress relief.</li>
+                    <li><strong>Ergonomic Wrist Rests:</strong> Small, slightly flattened spheres filled with plastic poly-pellets or dried beans to support wrists while using a computer mouse or keyboard.</li>
+                </ul>
+                <p><strong>Interactive & Functional Household Items:</strong></p>
+                <ul>
+                    <li><strong>Pincushions:</strong> Compact, tightly stitched spheres (or hemisphere bases) make sturdy pincushions for sewing and embroidery needles.</li>
+                </ul>
+                <p><strong>Educational & Conceptual Models:</strong></p>
+                <ul>
+                    <li><strong>Astronomy & Science Models:</strong> Scaled representations of planets, moons, or cellular/atomic structures for teaching or display.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
 
-async function generatePattern() {
-    const shape = document.getElementById('shapeSelect').value;
-    const unit = document.getElementById('unitSystem').value;
-    const yarn = document.getElementById('yarnWeight').value;
-    const hook = document.getElementById('hookSize').value;
+    <!-- 2. Yarn Weight Modal -->
+    <div id="yarnModal" class="modal-overlay">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModal('yarnModal')">&times;</button>
+            <h3>What are Yarn Weights?</h3>
+            <p>US System uses numbers (0-7) and descriptive terms (Fingering, Worsted, Bulky). UK/AU/NZ System frequently uses "Ply" (e.g., 4-ply, 8-ply). Note: In modern manufacturing, "ply" refers to thickness class, not literal strands.</p>
+            <table>
+                <tr>
+                    <th>Standard # | Category Name</th>
+                    <th>Common Names / Terminology</th>
+                    <th>Typical Crochet Hook Size<br><em>*Note amigurumi does typically use smaller hooks</em></th>
+                    <th>Common Uses</th>
+                </tr>
+                <tr>
+                    <td>0 | Lace</td>
+                    <td>Thread, Cobweb, Light Fingering</td>
+                    <td>1.4 mm - 2.25 mm</td>
+                    <td>Delicate doilies, airy lace shawls, micro-amigurumi.</td>
+                </tr>
+                <tr>
+                    <td>1 | Super Fine</td>
+                    <td>Fingering, Sock, Baby (UK: 4-Ply)</td>
+                    <td>2.25 mm - 3.5 mm</td>
+                    <td>Socks, lightweight shawls, baby garments.</td>
+                </tr>
+                <tr>
+                    <td>2 | Fine</td>
+                    <td>Sport, Baby (UK: 5-Ply)</td>
+                    <td>3.5 mm - 4.5 mm</td>
+                    <td>Light sweaters, spring garments, detailed accessories.</td>
+                </tr>
+                <tr>
+                    <td>3 | Light</td>
+                    <td>DK (Double Knitting), Light Worsted (UK: 8-Ply)</td>
+                    <td>4.5 mm - 5.5 mm</td>
+                    <td>Sweaters, baby blankets, lightweight hats, amigurumi.</td>
+                </tr>
+                <tr>
+                    <td>4 | Medium</td>
+                    <td>Worsted, Aran, Afghan (UK: 10-Ply)</td>
+                    <td>5.5 mm - 6.5 mm</td>
+                    <td>The standard workhorse: blankets, sweaters, hats, standard amigurumi.</td>
+                </tr>
+                <tr>
+                    <td>5 | Bulky</td>
+                    <td>Chunky, Craft, Rug (UK: 12-Ply)</td>
+                    <td>6.5 mm - 9.0 mm</td>
+                    <td>Warm hats, thick cowls, fast plushies, floor baskets.</td>
+                </tr>
+                <tr>
+                    <td>6 | Super Bulky</td>
+                    <td>Super Chunky, Roving</td>
+                    <td>9.0 mm - 15.0 mm</td>
+                    <td>Quick blankets, plush velvet toys, thick winter scarves.</td>
+                </tr>
+                <tr>
+                    <td>7 | Jumbo</td>
+                    <td>Roving, Giant Plush</td>
+                    <td>15.0 mm+ (or Arm Knitting)</td>
+                    <td>Heavy chunky blankets, oversized poufs.</td>
+                </tr>
+            </table>
+            <p style="margin-top: 15px; font-size: 13px;"><strong>Wraps Per Inch (WPI):</strong> Wrap yarn around a ruler without stretching and count strands in 1 inch. Lace (0): 35+ WPI | Super Fine (1): 14-18 WPI | Fine (2): 12-14 WPI | Light/DK (3): 11-12 WPI | Medium/Worsted (4): 9-11 WPI | Bulky (5): 6-8 WPI | Super Bulky (6): 5-6 WPI | Jumbo (7): &lt;5 WPI.</p>
+        </div>
+    </div>
 
-    let queryParams = `?yarn_weight=${yarn}&hook_size_mm=${hook}`;
+    <!-- 3. Hook Size / Amigurumi Guide Modal -->
+    <div id="hookModal" class="modal-overlay">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModal('hookModal')">&times;</button>
+            <h3>Amigurumi Yarn & Hook Guide</h3>
 
-    if (shape === 'sphere') {
-        const val = document.getElementById('sphereDiameter').value;
-        queryParams += unit === 'imperial' ? `&max_diameter_inches=${val}` : `&max_diameter_cm=${val}`;
-    } else if (shape === 'cylinder') {
-        const diam = document.getElementById('cylDiameter').value;
-        const height = document.getElementById('cylHeight').value;
-        const closed = document.getElementById('cylClosed').value;
-        queryParams += unit === 'imperial' ? `&max_diameter_inches=${diam}&max_height_inches=${height}` : `&max_diameter_cm=${diam}&max_height_cm=${height}`;
-        queryParams += `&closed=${closed}`;
-    } else if (shape === 'cone') {
-        const coneShape = document.getElementById('coneShapeSelect').value;
-        const base = document.getElementById('coneBase').value;
-        const height = document.getElementById('coneHeight').value;
-        queryParams += `&cone_shape=${coneShape}`;
-        queryParams += unit === 'imperial' ? `&max_diameter_inches=${base}&max_height_inches=${height}` : `&max_diameter_cm=${base}&max_height_cm=${height}`;
-    } else if (shape === 'oval') {
-        const len = document.getElementById('ovalLength').value;
-        const wid = document.getElementById('ovalWidth').value;
-        queryParams += `&oval_shape=egg_shaped`;
-        queryParams += unit === 'imperial' ? `&max_length_inches=${len}&max_width_inches=${wid}` : `&max_length_cm=${len}&max_width_cm=${wid}`;
+            <h4 style="margin-top:15px; color:#2c3e50;">What type of yarn should I use specifically for Amigurumi?</h4>
+            <p>Standard crochet patterns (like blankets or garments) use larger hooks to create a soft, flexible drape. Amigurumi requires a tight, dense fabric so the fiberfill stuffing doesn't poke out through the stitches. The golden rule for amigurumi is to drop 1 to 3 hook sizes (0.5 mm - 1.5 mm smaller) than what the yarn skein label recommends.</p>
+
+            <h4 style="margin-top:15px; color:#2c3e50;">3 Rules of Thumb for Choosing Your Hook</h4>
+            <ul>
+                <li><strong>Check for "Gapping":</strong> If you stuff your piece and can see white stuffing poking between your single crochet stitches, drop down 0.5 mm in hook size.</li>
+                <li><strong>Yarn Fiber Matters:</strong>
+                    <ul>
+                        <li><em>100% Cotton:</em> Zero stretch. You can stick closer to a 3.0 mm – 3.5 mm hook for worsted weight.</li>
+                        <li><em>Acrylic:</em> Slight give/stretch. Usually pairs best with a 3.5 mm – 4.0 mm hook for worsted weight.</li>
+                        <li><em>Chenille / Velvet Yarns:</em> Notoriously tricky because pulling stitches too tight can cause "snagging" or breaking the core thread. Using a 5.0 mm – 6.5 mm hook is usually the sweet spot to keep it plush without losing shape.</li>
+                    </ul>
+                </li>
+                <li><strong>Stitch Tension & Style:</strong> If you use the "Yarn Under, Yarn Over" (X-stitch) method instead of standard "Yarn Over, Yarn Over" (V-stitch), your stitches naturally sit tighter, allowing you to use a slightly larger hook while keeping the fabric dense.</li>
+            </ul>
+
+            <h4 style="margin-top:20px; color:#2c3e50;">What hook should I use specifically for Amigurumi?</h4>
+            <table>
+                <tr>
+                    <th>Yarn Weight Category</th>
+                    <th>Recommended Amigurumi Hook Size</th>
+                    <th>Common Yarn Types for Amigurumi</th>
+                </tr>
+                <tr>
+                    <td>#1 Super Fine / Fingering</td>
+                    <td>1.5 mm - 2.25 mm (Steel Hooks or B-1)</td>
+                    <td>Micro-amigurumi, crochet thread, lace-weight cotton</td>
+                </tr>
+                <tr>
+                    <td>#2 Fine / Sport</td>
+                    <td>2.0 mm - 2.75 mm (B-1 to C-2)</td>
+                    <td>Detailed mini plushies, 4-ply cotton/acrylic blends</td>
+                </tr>
+                <tr>
+                    <td>#3 Light / DK</td>
+                    <td>2.5 mm - 3.25 mm (C-2 to D-3)</td>
+                    <td>Fine detail amigurumi, Ricorumi, Paintbox DK</td>
+                </tr>
+                <tr>
+                    <td>#4 Medium / Worsted</td>
+                    <td>3.25 mm - 4.0 mm (D-3 to G-6)</td>
+                    <td>The Classic Workhorse: Red Heart Super Saver, Impeccable, Caron Simply Soft</td>
+                </tr>
+                <tr>
+                    <td>#5 Bulky</td>
+                    <td>4.5 mm - 5.5 mm (H-8 to I-9)</td>
+                    <td>Chunky acrylics, lightweight chenille</td>
+                </tr>
+                <tr>
+                    <td>#6 Super Bulky</td>
+                    <td>6.0 mm - 8.0 mm (J-10 to L-11)</td>
+                    <td>Plush velvet yarns (e.g., Premier Parfait Chunky, Sweet Snuggles)</td>
+                </tr>
+                <tr>
+                    <td>#7 Jumbo</td>
+                    <td>9.0 mm - 12.0 mm (M-13 to N-15)</td>
+                    <td>Giant plushies, Bernat Blanket Extra</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- 4. Safety Eyes Modal -->
+    <div id="eyesModal" class="modal-overlay">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModal('eyesModal')">&times;</button>
+            <h3>Safety Eye Sizing Matrix</h3>
+            <p><strong>The Stitch-Width Rule:</strong> A safety eye should span roughly <strong>2 to 3 single crochet stitches</strong> on your equator row.</p>
+            <table>
+                <tr><th>Sphere Diameter</th><th>Equator Stitches</th><th>Eye Size</th><th>Spacing</th></tr>
+                <tr><td>1.5 in (~38 mm)</td><td>18-24 sts</td><td>6 mm - 8 mm</td><td>4-5 sts</td></tr>
+                <tr><td>2.0 in (~50 mm)</td><td>30 sts</td><td>8 mm - 10 mm</td><td>5-6 sts</td></tr>
+                <tr><td>2.5 - 3.0 in</td><td>36-42 sts</td><td>10 mm - 12 mm</td><td>7-8 sts</td></tr>
+                <tr><td>3.5 - 4.0 in</td><td>48-54 sts</td><td>12 mm - 16 mm</td><td>9-11 sts</td></tr>
+                <tr><td>4.5 - 5.0 in</td><td>60-66 sts</td><td>16 mm - 18 mm</td><td>12-14 sts</td></tr>
+                <tr><td>6.0 in+</td><td>72+ sts</td><td>20 mm - 25 mm+</td><td>15+ sts</td></tr>
+            </table>
+            <p style="margin-top:10px; font-size:13px;"><em>Styles:</em> <strong>Kawaii/Anime</strong> steps up 1-2 eye sizes; <strong>Minimalist</strong> steps down 1-2 sizes.</p>
+        </div>
+    </div>
+
+    <script>
+    // Modal Control Functions using class toggling
+    function openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('active');
+        }
     }
 
-    const baseUrl = 'https://ashme5280-amigurumi-api.onrender.com';
-    const url = `${baseUrl}/${shape}/${queryParams}`;
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('active');
+        }
+    }
 
-    const outputDiv = document.getElementById('outputResults');
-    outputDiv.innerHTML = "<p>Generating your custom pattern...</p>";
+    function toggleSphereIdeas() {
+        const content = document.getElementById('sphereIdeasContent');
+        const toggleBtn = document.getElementById('sphereIdeasToggle');
+        if (content.style.display === 'none' || content.style.display === '') {
+            content.style.display = 'block';
+            toggleBtn.innerText = 'Need Ideas? ▲';
+        } else {
+            content.style.display = 'none';
+            toggleBtn.innerText = 'Need Ideas? ▼';
+        }
+    }
 
-    try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("Failed to generate pattern. Check your parameters.");
-        const data = await response.json();
+    // Close modal when clicking outside the card overlay
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal-overlay')) {
+            event.target.classList.remove('active');
+        }
+    }
 
-        let dimensionDisplay = "";
-        if (shape === 'sphere') {
-            const size = unit === 'imperial' ? `${Number(data.dimensions.diameter_inches).toFixed(1)} inches` : `${Number(data.dimensions.diameter_cm).toFixed(1)} cm`;
-            dimensionDisplay = `<strong>Finished Diameter:</strong> ~${size}`;
-        } else if (shape === 'cylinder') {
-            const diamVal = data.dimensions.diameter_inches || data.dimensions.base_diameter_inches;
-            const heightVal = data.dimensions.height_inches;
-            const diamCm = data.dimensions.diameter_cm || data.dimensions.base_diameter_cm;
-            const heightCm = data.dimensions.height_cm;
-
-            const diam = unit === 'imperial' ? `${Number(diamVal).toFixed(1)} in` : `${Number(diamCm).toFixed(1)} cm`;
-            const height = unit === 'imperial' ? `${Number(heightVal).toFixed(1)} in` : `${Number(heightCm).toFixed(1)} cm`;
-            dimensionDisplay = `<strong>Finished Size:</strong> ~${diam} wide × ~${height} tall`;
-        } else if (shape === 'cone') {
-            const baseVal = data.dimensions.base_diameter_inches;
-            const heightVal = data.dimensions.height_inches;
-            const baseCm = data.dimensions.base_diameter_cm;
-            const heightCm = data.dimensions.height_cm;
-
-            const base = unit === 'imperial' ? `${Number(baseVal).toFixed(1)} in` : `${Number(baseCm).toFixed(1)} cm`;
-            const height = unit === 'imperial' ? `${Number(heightVal).toFixed(1)} in` : `${Number(heightCm).toFixed(1)} cm`;
-            dimensionDisplay = `<strong>Finished Size:</strong> ~${base} base × ~${height} tall (${data.dimensions.cone_shape} cone)`;
-        } else if (shape === 'oval') {
-            const lenVal = data.dimensions.max_length_inches;
-            const widVal = data.dimensions.max_width_inches;
-            const lenCm = data.dimensions.max_length_cm;
-            const widCm = data.dimensions.max_width_cm;
-
-            const len = unit === 'imperial' ? `${Number(lenVal).toFixed(1)} in` : `${Number(lenCm).toFixed(1)} cm`;
-            const wid = unit === 'imperial' ? `${Number(widVal).toFixed(1)} in` : `${Number(widCm).toFixed(1)} cm`;
-            dimensionDisplay = `<strong>Finished Size:</strong> ~${len} long × ~${wid} wide (egg-shaped)`;
+    // Event listeners and functions
+    document.addEventListener('DOMContentLoaded', () => {
+        const generateBtn = document.getElementById('generateBtn');
+        if (generateBtn) {
+            generateBtn.addEventListener('click', generatePattern);
         }
 
-        let html = `<h3>Pattern Specifications</h3>`;
-        html += `<div class="metrics-card">`;
-        html += `<p><strong>Total Rounds:</strong> ${data.total_rounds}</p>`;
-        html += `<p>${dimensionDisplay}</p>`;
-        html += `<p><strong>Estimated Yarn:</strong> ${data.dimensions.estimated_yarn_yards} yards (${data.dimensions.estimated_yarn_meters} meters)</p>`;
-        html += `</div>`;
+        const unitSystemSelect = document.getElementById('unitSystem');
+        if (unitSystemSelect) {
+            unitSystemSelect.addEventListener('change', updateUnits);
+        }
 
-        // Stuffing Tip Banner
-        html += `<div class="stuffing-tip">`;
-        html += `<strong>💡 Stuffing Tip:</strong>`;
-        html += `Start stuffing 2–3 rows into the decrease, adding more gradually as you shape before closing off.`;
-        html += `</div>`;
+        const shapeSelect = document.getElementById('shapeSelect');
+        if (shapeSelect) {
+            shapeSelect.addEventListener('change', toggleShapeFields);
+        }
 
-        html += `<h3>Round-by-Round Instructions</h3><ul class="pattern-list">`;
-        data.pattern.forEach(step => {
-            html += `<li>${step.instruction}</li>`;
-        });
-        html += `</ul>`;
+        const sphereInputModeSelect = document.getElementById('sphereInputMode');
+        if (sphereInputModeSelect) {
+            sphereInputModeSelect.addEventListener('change', toggleSphereInputMode);
+        }
+    });
 
-        outputDiv.innerHTML = html;
-    } catch (error) {
-        console.error('Error:', error);
-        outputDiv.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
+    function updateUnits() {
+        const unit = document.getElementById('unitSystem').value;
+        const unitLabel = unit === 'imperial' ? 'inches' : 'centimeters';
+
+        const diamLabel = document.getElementById('sphereDiamLabel');
+        if (diamLabel) diamLabel.innerText = `Target Diameter (${unitLabel}):`;
+
+        const cylDiamLabel = document.getElementById('cylDiamLabel');
+        if (cylDiamLabel) cylDiamLabel.innerText = `Target Diameter (${unitLabel}):`;
+
+        const cylHeightLabel = document.getElementById('cylHeightLabel');
+        if (cylHeightLabel) cylHeightLabel.innerText = `Target Height (${unitLabel}):`;
+
+        const coneBaseLabel = document.getElementById('coneBaseLabel');
+        if (coneBaseLabel) coneBaseLabel.innerText = `Base Diameter (${unitLabel}):`;
+
+        const coneHeightLabel = document.getElementById('coneHeightLabel');
+        if (coneHeightLabel) coneHeightLabel.innerText = `Target Height (${unitLabel}):`;
+
+        const ovalLengthLabel = document.getElementById('ovalLengthLabel');
+        if (ovalLengthLabel) ovalLengthLabel.innerText = `Target Length (${unitLabel}):`;
+
+        const ovalWidthLabel = document.getElementById('ovalWidthLabel');
+        if (ovalWidthLabel) ovalWidthLabel.innerText = `Target Width (${unitLabel}):`;
     }
-}
-</script>
 
+    function toggleShapeFields() {
+        const shape = document.getElementById('shapeSelect').value;
+        document.getElementById('sphereFields').style.display = shape === 'sphere' ? 'block' : 'none';
+        document.getElementById('cylinderFields').style.display = shape === 'cylinder' ? 'block' : 'none';
+        document.getElementById('coneFields').style.display = shape === 'cone' ? 'block' : 'none';
+        document.getElementById('ovalFields').style.display = shape === 'oval' ? 'block' : 'none';
+    }
 
+    function toggleSphereInputMode() {
+        const mode = document.getElementById('sphereInputMode').value;
+        const diamInput = document.getElementById('sphereDiameter');
+        const stitchInput = document.getElementById('sphereStitches');
+
+        if (mode === 'diameter') {
+            diamInput.disabled = false;
+            stitchInput.disabled = true;
+        } else {
+            diamInput.disabled = true;
+            stitchInput.disabled = false;
+        }
+    }
+
+    async function generatePattern() {
+        const shape = document.getElementById('shapeSelect').value;
+        const unit = document.getElementById('unitSystem').value;
+        const yarn = document.getElementById('yarnWeight').value;
+        const hook = document.getElementById('hookSize').value;
+        const safetyOpt = document.getElementById('safetyEyesOpt').value;
+        const stuffingOpt = document.getElementById('stuffingOpt').value;
+
+        let queryParams = `?yarn_weight=${encodeURIComponent(yarn)}&hook_size_mm=${encodeURIComponent(hook)}&safety_eyes=${encodeURIComponent(safetyOpt)}&stuffing=${encodeURIComponent(stuffingOpt)}`;
+
+        if (shape === 'sphere') {
+            const mode = document.getElementById('sphereInputMode').value;
+            if (mode === 'diameter') {
+                const val = document.getElementById('sphereDiameter').value;
+                queryParams += unit === 'imperial' ? `&max_diameter_inches=${val}` : `&max_diameter_cm=${val}`;
+            } else {
+                const stitches = document.getElementById('sphereStitches').value;
+                queryParams += `&max_stitches=${stitches}`;
+            }
+        } else if (shape === 'cylinder') {
+            const diam = document.getElementById('cylDiameter').value;
+            const height = document.getElementById('cylHeight').value;
+            const closed = document.getElementById('cylClosed').value;
+            queryParams += unit === 'imperial' ? `&diameter_inches=${diam}&height_inches=${height}` : `&diameter_cm=${diam}&height_cm=${height}`;
+            queryParams += `&closed=${closed}`;
+        } else if (shape === 'cone') {
+            const taper = document.getElementById('coneShapeSelect').value;
+            const base = document.getElementById('coneBase').value;
+            const height = document.getElementById('coneHeight').value;
+            queryParams += `&taper_style=${taper}`;
+            queryParams += unit === 'imperial' ? `&base_diameter_inches=${base}&height_inches=${height}` : `&base_diameter_cm=${base}&height_cm=${height}`;
+        } else if (shape === 'oval') {
+            const length = document.getElementById('ovalLength').value;
+            const width = document.getElementById('ovalWidth').value;
+            queryParams += unit === 'imperial' ? `&target_length_inches=${length}&target_width_inches=${width}` : `&target_length_cm=${length}&target_width_cm=${width}`;
+        }
+
+        const url = `http://127.0.0.1:8000/${shape}/${queryParams}`;
+
+        const outputDiv = document.getElementById('outputResults');
+        outputDiv.innerHTML = "<p>Generating your custom pattern...</p>";
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                const errData = await response.json();
+                throw new Error(errData.detail || "Failed to generate pattern.");
+            }
+            const data = await response.json();
+
+            let sizeStr = unit === 'imperial' ? `${data.dimensions.diameter_inches || data.dimensions.length_inches} inches` : `${data.dimensions.diameter_cm || data.dimensions.length_cm} cm`;
+
+            let html = `<h3>Pattern Specifications</h3>`;
+            html += `<div class="metrics-card">`;
+            html += `<p><strong>Total Rounds:</strong> ${data.total_rounds}</p>`;
+            html += `<p><strong>Finished Size:</strong> ~${sizeStr}</p>`;
+            html += `<p><strong>Supplies You Need:</strong></p>`;
+            html += `<ul class="supplies-list">`;
+            html += `<li><strong>Estimated Yarn:</strong> ${data.supplies_you_need.estimated_yarn}</li>`;
+            html += `<li><strong>Hook:</strong> ${data.supplies_you_need.hook}</li>`;
+            html += `<li><strong>Safety Eyes:</strong> ${data.supplies_you_need.safety_eyes}</li>`;
+            html += `<li><strong>Stuffing:</strong> ${data.supplies_you_need.stuffing_volume}</li>`;
+            html += `</ul>`;
+            html += `</div>`;
+
+            html += `<h3>Round-by-Round Instructions</h3><ul class="pattern-list">`;
+            data.pattern.forEach(step => {
+                html += `<li>${step.instruction}</li>`;
+            });
+            html += `</ul>`;
+
+            outputDiv.innerHTML = html;
+        } catch (error) {
+            console.error('Error:', error);
+            outputDiv.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
+        }
+    }
+    </script>
 
 </body>
+</html>
