@@ -65,7 +65,8 @@ def get_cylinder_pattern(
     height_rounds: int | None = Query(None, gt=0, description="Number of straight even body rounds"),
     max_height_inches: float | None = Query(None, gt=0, description="Target finished height in inches"),
     max_height_cm: float | None = Query(None, gt=0, description="Target finished height in centimeters"),
-    closed: bool = Query(True, description="True to close the end with decreases, False to leave open")
+    closed: bool = Query(True, description="True to close the end with decreases, False to leave open"),
+    stuffing: bool = Query(True, description="Include stuffing instructions")
 ):
     # 1. Validate Width/Diameter Options (Must provide exactly one)
     width_options = sum(1 for opt in [target_stitches, max_diameter_inches, max_diameter_cm] if opt is not None)
@@ -163,8 +164,11 @@ def get_cylinder_pattern(
         total_stitch_count += current_stitches
         step_count += 1
 
-    # 4. Straight Even Tube Body
-    for _ in range(height_rounds):
+    # 4. Straight Even Tube Body (Inject stuffing halfway through if enabled)
+    stuffing_inserted = False
+    halfway_round = height_rounds // 2
+
+    for i in range(height_rounds):
         current_round += 1
         instructions.append({
             "round": current_round, "phase": "even_tube", "stitches_in_round": current_stitches,
@@ -172,10 +176,25 @@ def get_cylinder_pattern(
         })
         total_stitch_count += current_stitches
 
+        # Insert stuffing instruction halfway through body or right before decreases if body is short
+        if stuffing and not stuffing_inserted and (i + 1 == halfway_round or height_rounds == 1):
+            instructions.append({
+                "round": current_round, "phase": "stuffing", "stitches_in_round": current_stitches,
+                "instruction": "Start stuffing, adding more gradually as you shape before closing off."
+            })
+            stuffing_inserted = True
+
     # 5. Optional Decrease Phase (Only if closed=True)
     if closed:
+        # If stuffing is enabled and wasn't inserted yet, add it right before decreases start
+        if stuffing and not stuffing_inserted:
+            instructions.append({
+                "round": current_round, "phase": "stuffing", "stitches_in_round": current_stitches,
+                "instruction": "Start stuffing, adding more gradually as you shape before closing off."
+            })
+            stuffing_inserted = True
+
         step_count -= 1
-        # Continue standard decreases until down to 2 * initial_stitches (ready for final all-dec row)
         while current_stitches > (initial_stitches * 2):
             current_round += 1
             current_stitches -= increment
@@ -186,7 +205,7 @@ def get_cylinder_pattern(
             total_stitch_count += current_stitches
             step_count -= 1
 
-        # 6. Final Round: All Decreases (Mirrors Round 2 to close the tip back down)
+        # 6. Final Round: All Decreases
         current_round += 1
         current_stitches -= initial_stitches
         instructions.append({
@@ -208,10 +227,16 @@ def get_cylinder_pattern(
             "max_height_inches": max_height_inches,
             "max_height_cm": max_height_cm,
             "closed": closed,
+            "stuffing": stuffing,
             "yarn_weight": yarn_weight.value,
             "hook_size_mm": hook_size_mm
         },
         "dimensions": metrics,
+        "supplies_you_need": {
+            "estimated_yarn": f"{metrics['estimated_yarn_yards']} yards ({metrics['estimated_yarn_meters']} meters)",
+            "hook": f"{hook_size_mm} mm",
+            "stuffing_volume": f"{metrics['volume_cubic_inches']} cubic inches ({metrics['volume_cubic_cm']} cm³)"
+        },
         "total_rounds": len(instructions),
         "pattern": instructions
     }

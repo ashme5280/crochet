@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amigurumi Cylinder Pattern Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <h2>Amigurumi Pattern Generator</h2>
+
+    <!-- Navigation Bar -->
+    <div class="nav-links">
+        <a href="sphere.html">Sphere</a> |
+        <a href="cylinder.html" class="active">Cylinder</a> |
+        <a href="cone.html">Cone</a> |
+        <a href="oval.html">Oval</a>
+    </div>
+
+    <!-- 1. Universal Settings -->
+    <div class="form-group">
+        <label>Unit System:</label>
+        <select id="unitSystem">
+            <option value="imperial" selected>Inches</option>
+            <option value="metric">Centimeters</option>
+        </select>
+    </div>
+
+    <!-- 2. Shape Selection -->
+    <div class="form-group">
+        <div class="label-row">
+            <label>Shape:</label>
+            <button type="button" class="info-link" onclick="openModal('cylinderModal')">Why make a cylinder?</button>
+        </div>
+        <select id="shapeSelect" disabled>
+            <option value="cylinder" selected>Cylinder</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <div class="label-row">
+            <label>Yarn Weight:</label>
+            <button type="button" class="info-link" onclick="openModal('yarnModal')">What are Yarn Weights?</button>
+        </div>
+        <select id="yarnWeight">
+            <option value="fingering">Fingering</option>
+            <option value="sport">Sport</option>
+            <option value="dk" selected>DK</option>
+            <option value="worsted">Worsted</option>
+            <option value="bulky">Bulky</option>
+            <option value="super_bulky">Super Bulky</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <div class="label-row">
+            <label>Hook Size (mm):</label>
+            <button type="button" class="info-link" onclick="openModal('hookModal')">Amigurumi Yarn & Hook Guide</button>
+        </div>
+        <input type="number" id="hookSize" value="3.0" min="0.5" max="35.0" step="0.5">
+    </div>
+
+    <!-- 3. Cylinder-Specific Fields Container -->
+    <div id="shapeFields" class="conditional-fields">
+        <div id="cylinderFields" class="shape-input-group">
+
+            <!-- Diameter / Width Input Mode -->
+            <div class="form-group">
+                <label>Width Input Mode:</label>
+                <select id="cylinderWidthMode">
+                    <option value="diameter" selected>Target Diameter</option>
+                    <option value="stitches">Max Stitches</option>
+                </select>
+            </div>
+            <div class="form-group" id="cylinderDiamGroup">
+                <label id="cylinderDiamLabel">Target Diameter (inches):</label>
+                <input type="number" id="cylinderDiameter" value="3.0" min="1" max="100.0" step="0.5">
+            </div>
+            <div class="form-group" id="cylinderStitchGroup">
+                <label id="cylinderStitchLabel">Max Stitches (e.g., 24, 30):</label>
+                <input type="number" id="cylinderStitches" value="30" min="6" max="6000" step="6" disabled>
+            </div>
+
+            <hr style="border:0; border-top:1px solid #cbd5e1; margin: 20px 0;">
+
+            <!-- Height Input Mode -->
+            <div class="form-group">
+                <label>Height Input Mode:</label>
+                <select id="cylinderHeightMode">
+                    <option value="height" selected>Target Height</option>
+                    <option value="rows">Total Rows</option>
+                </select>
+            </div>
+            <div class="form-group" id="cylinderHeightGroup">
+                <label id="cylinderHeightLabel">Target Height (inches):</label>
+                <input type="number" id="cylinderHeight" value="5.0" min="1" max="100.0" step="0.5">
+            </div>
+            <div class="form-group" id="cylinderRowsGroup">
+                <label id="cylinderRowsLabel">Total Rows (e.g., 10, 15):</label>
+                <input type="number" id="cylinderRows" value="12" min="6" max="6000" step="1" disabled>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 4. Cylinder Configuration Options -->
+    <div class="form-group">
+        <div class="label-row">
+            <label>Ends Configuration:</label>
+            <button type="button" class="info-link" onclick="openModal('endsModal')">Closed or Open Cylinder?</button>
+        </div>
+        <select id="cylinderEnds">
+            <option value="closed" selected>Closed (Both ends capped)</option>
+            <option value="open">Open (One end capped)</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Add Stuffing Instructions?</label>
+        <select id="stuffingOpt">
+            <option value="yes" selected>Yes</option>
+            <option value="no">No</option>
+        </select>
+    </div>
+
+    <button id="generateBtn" type="button" class="generate-btn" onclick="generateCylinderPattern()">Generate Cylinder Pattern</button>
+
+    <!-- Results Container -->
+    <div id="outputResults" style="margin-top: 20px;"></div>
+
+    <!-- MODAL POPUPS -->
+    <!-- 1. Cylinder Uses Modal -->
+    <div id="cylinderModal" class="modal-overlay">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModal('cylinderModal')">&times;</button>
+            <h3>Why make a cylinder?</h3>
+            <p>The cylinder shape is one of the foundational building blocks of amigurumi crochet, used to construct the core structure and functional parts of toys, dolls, and miniature objects.</p>
+            <p><button type="button" class="info-link" onclick="toggleCylinderIdeas()" id="cylinderIdeasToggle">Need Ideas? ▼</button></p>
+            <div id="cylinderIdeasContent" style="display: none; margin-top: 10px;">
+                <h4>Main Purposes of a Cylinder in Amigurumi</h4>
+                <ul>
+                    <li><strong>Limbs and Appendages:</strong> They are the standard shape for arms, legs, paws, and hooves because of their narrow, straight, or gently curved tube form.</li>
+                    <li><strong>Bodies and Torsos:</strong> Wider cylinders form the main trunk or body of animal figures, dolls, and creatures.</li>
+                    <li><strong>Necks and Connectors:</strong> Short, narrow cylinders serve as the neck that bridges a spherical head to a body.</li>
+                    <li><strong>Tails and Snouts:</strong> Long or tapered cylinders make flexible tails, snouts, horns, or ears.</li>
+                    <li><strong>Props and Accessories:</strong> Because cylinders can stand on their own or hold a hollow structure, they are ideal for crafting miniature hats, cups, barrels, baskets, plant pots, and pencil holders.</li>
+                    <li><strong>Finger Puppets:</strong> Small open-ended cylinder tubes are built specifically as the base for finger puppets.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Yarn Weight Modal -->
+    <div id="yarnModal" class="modal-overlay">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModal('yarnModal')">&times;</button>
+            <h3>What are Yarn Weights?</h3>
+            <p>US System uses numbers (0-7) and descriptive terms (Fingering, Worsted, Bulky). UK/AU/NZ System frequently uses "Ply" (e.g., 4-ply, 8-ply). Note: In modern manufacturing, "ply" refers to thickness class, not literal strands.</p>
+            <table>
+                <tr>
+                    <th>Standard # | Category Name</th>
+                    <th>Common Names / Terminology</th>
+                    <th>Typical Crochet Hook Size</th>
+                    <th>Common Uses</th>
+                </tr>
+                <tr>
+                    <td>0 | Lace</td>
+                    <td>Thread, Cobweb, Light Fingering</td>
+                    <td>1.4 mm - 2.25 mm</td>
+                    <td>Delicate doilies, airy lace shawls, micro-amigurumi.</td>
+                </tr>
+                <tr>
+                    <td>1 | Super Fine</td>
+                    <td>Fingering, Sock, Baby (UK: 4-Ply)</td>
+                    <td>2.25 mm - 3.5 mm</td>
+                    <td>Socks, lightweight shawls, baby garments.</td>
+                </tr>
+                <tr>
+                    <td>2 | Fine</td>
+                    <td>Sport, Baby (UK: 5-Ply)</td>
+                    <td>3.5 mm - 4.5 mm</td>
+                    <td>Light sweaters, spring garments, detailed accessories.</td>
+                </tr>
+                <tr>
+                    <td>3 | Light</td>
+                    <td>DK (Double Knitting), Light Worsted (UK: 8-Ply)</td>
+                    <td>4.5 mm - 5.5 mm</td>
+                    <td>Sweaters, baby blankets, lightweight hats, amigurumi.</td>
+                </tr>
+                <tr>
+                    <td>4 | Medium</td>
+                    <td>Worsted, Aran, Afghan (UK: 10-Ply)</td>
+                    <td>5.5 mm - 6.5 mm</td>
+                    <td>The standard workhorse: blankets, sweaters, hats, standard amigurumi.</td>
+                </tr>
+                <tr>
+                    <td>5 | Bulky</td>
+                    <td>Chunky, Craft, Rug (UK: 12-Ply)</td>
+                    <td>6.5 mm - 9.0 mm</td>
+                    <td>Warm hats, thick cowls, fast plushies, floor baskets.</td>
+                </tr>
+                <tr>
+                    <td>6 | Super Bulky</td>
+                    <td>Super Chunky, Roving</td>
+                    <td>9.0 mm - 15.0 mm</td>
+                    <td>Quick blankets, plush velvet toys, thick winter scarves.</td>
+                </tr>
+                <tr>
+                    <td>7 | Jumbo</td>
+                    <td>Roving, Giant Plush</td>
+                    <td>15.0 mm+ (or Arm Knitting)</td>
+                    <td>Heavy chunky blankets, oversized poufs.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- 3. Hook Size / Amigurumi Guide Modal -->
+    <div id="hookModal" class="modal-overlay">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModal('hookModal')">&times;</button>
+            <h3>Amigurumi Yarn & Hook Guide</h3>
+            <p>For amigurumi, you generally want to use a hook size **smaller** than what the yarn label recommends. This creates tight stitches that prevent the polyester stuffing from showing through.</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
