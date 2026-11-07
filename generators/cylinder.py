@@ -164,54 +164,66 @@ def get_cylinder_pattern(
         total_stitch_count += current_stitches
         step_count += 1
 
-    # 4. Straight Even Tube Body (Inject stuffing halfway through if enabled)
+    # 4. Straight Even Tube Body
     stuffing_inserted = False
     halfway_round = height_rounds // 2
 
     for i in range(height_rounds):
         current_round += 1
-        instructions.append({
-            "round": current_round, "phase": "even_tube", "stitches_in_round": current_stitches,
+        round_data = {
+            "round": current_round,
+            "phase": "even_tube",
+            "stitches_in_round": current_stitches,
             "instruction": f"Rnd {current_round}: sc in each st around. ({current_stitches} sts)"
-        })
-        total_stitch_count += current_stitches
+        }
 
-        # Insert stuffing instruction halfway through body or right before decreases if body is short
+        # Embed stuffing instruction directly into the round if triggered here
         if stuffing and not stuffing_inserted and (i + 1 == halfway_round or height_rounds == 1):
-            instructions.append({
-                "round": current_round, "phase": "stuffing", "stitches_in_round": current_stitches,
-                "instruction": "Start stuffing, adding more gradually as you shape before closing off."
-            })
+            round_data["stuffing_instruction"] = "Start stuffing, adding more gradually as you shape before closing off."
             stuffing_inserted = True
+
+        instructions.append(round_data)
+        total_stitch_count += current_stitches
 
     # 5. Optional Decrease Phase (Only if closed=True)
     if closed:
-        # If stuffing is enabled and wasn't inserted yet, add it right before decreases start
+        # If stuffing is enabled and wasn't inserted yet, attach it to the first decrease round
+        pending_stuffing = False
         if stuffing and not stuffing_inserted:
-            instructions.append({
-                "round": current_round, "phase": "stuffing", "stitches_in_round": current_stitches,
-                "instruction": "Start stuffing, adding more gradually as you shape before closing off."
-            })
+            pending_stuffing = True
             stuffing_inserted = True
 
         step_count -= 1
         while current_stitches > (initial_stitches * 2):
             current_round += 1
             current_stitches -= increment
-            instructions.append({
-                "round": current_round, "phase": "decrease", "stitches_in_round": current_stitches,
+            round_data = {
+                "round": current_round,
+                "phase": "decrease",
+                "stitches_in_round": current_stitches,
                 "instruction": f"Rnd {current_round}: [sc in next {step_count} sts, dec] x {increment}. ({current_stitches} sts)"
-            })
+            }
+            if pending_stuffing:
+                round_data["stuffing_instruction"] = "Start stuffing, adding more gradually as you shape before closing off."
+                pending_stuffing = False
+
+            instructions.append(round_data)
             total_stitch_count += current_stitches
             step_count -= 1
 
-        # 6. Final Round: All Decreases
+        # 6. Final Round: All Decreases + Fasten off instructions included directly
         current_round += 1
         current_stitches -= initial_stitches
-        instructions.append({
-            "round": current_round, "phase": "decrease", "stitches_in_round": current_stitches,
+        final_round_data = {
+            "round": current_round,
+            "phase": "decrease",
+            "stitches_in_round": current_stitches,
             "instruction": f"Rnd {current_round}: [dec] x {initial_stitches}, fasten off and weave in tail. ({current_stitches} sts)"
-        })
+        }
+        if pending_stuffing:
+            final_round_data["stuffing_instruction"] = "Start stuffing, adding more gradually as you shape before closing off."
+
+        instructions.append(final_round_data)
         total_stitch_count += current_stitches
 
     metrics = calculate_cylinder_metrics(height_rounds, total_stitch_count, weight_key, hook_size_mm, closed, target_stitches)

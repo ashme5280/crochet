@@ -18,6 +18,11 @@
         <a href="oval.html">Oval</a>
     </div>
 
+    <!-- Centered Shape Description Link -->
+    <div style="text-align: center; margin: 15px 0;">
+        <button type="button" class="info-link" onclick="openModal('sphereModal')" style="background: none; border: none; font-size: 0.95rem;">Why make a sphere?</button>
+    </div>
+
     <!-- 1. Universal Settings -->
     <div class="form-group">
         <label>Unit System:</label>
@@ -27,17 +32,7 @@
         </select>
     </div>
 
-    <!-- 2. Shape Selection -->
-    <div class="form-group">
-        <div class="label-row">
-            <label>Shape:</label>
-            <button type="button" class="info-link" onclick="openModal('sphereModal')">Why make a sphere?</button>
-        </div>
-        <select id="shapeSelect" disabled>
-            <option value="sphere" selected>Sphere</option>
-        </select>
-    </div>
-
+    <!-- Yarn Weight Selection -->
     <div class="form-group">
         <div class="label-row">
             <label>Yarn Weight:</label>
@@ -53,6 +48,7 @@
         </select>
     </div>
 
+    <!-- Hook Size Selection -->
     <div class="form-group">
         <div class="label-row">
             <label>Hook Size (mm):</label>
@@ -61,7 +57,7 @@
         <input type="number" id="hookSize" value="3.0" min="0.5" max="35.0" step="0.5">
     </div>
 
-    <!-- 3. Sphere-Specific Fields Container -->
+    <!-- 2. Sphere-Specific Fields Container -->
     <div id="shapeFields" class="conditional-fields">
         <div id="sphereFields" class="shape-input-group">
             <div class="form-group">
@@ -82,7 +78,7 @@
         </div>
     </div>
 
-    <!-- 4. Feature Toggles (Safety Eyes & Stuffing) -->
+    <!-- 3. Feature Toggles (Safety Eyes & Stuffing) -->
     <div class="form-group">
         <div class="label-row">
             <label>Add Safety Eyes?</label>
@@ -310,6 +306,7 @@
         </div>
     </div>
 
+    <!-- Single script load for global logic -->
     <script src="script.js"></script>
     <script>
         // Page-specific API fetch logic for Sphere
@@ -403,7 +400,6 @@
                 outputDiv.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
             }
         }
-        </script>
-        <script src="script.js"></script>
-    </body>
-    </html>
+    </script>
+</body>
+</html>

@@ -302,14 +302,15 @@ async function generateCylinderPattern() {
 
         html += `<h3>Round-by-Round Instructions</h3><ul class="pattern-list">`;
         data.pattern.forEach(step => {
-          // This outputs every instruction item, including stuffing cues returned by FastAPI
-          html += `<li>${step.instruction}</li>`;
+            html += `<li>${step.instruction}`;
+            if (step.stuffing_instruction) {
+                html += `<div style="color: #64748b; font-size: 0.9em; margin-top: 2px;">💡 ${step.stuffing_instruction}</div>`;
+            }
+            html += `</li>`;
         });
         html += `</ul>`;
 
         outputDiv.innerHTML = html;
-
-                outputDiv.innerHTML = html;
     } catch (error) {
         console.error('Error:', error);
         outputDiv.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;

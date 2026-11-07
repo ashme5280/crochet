@@ -18,23 +18,17 @@
         <a href="oval.html">Oval</a>
     </div>
 
+    <!-- Centered Shape Description Link -->
+        <div style="text-align: center; margin: 15px 0;">
+            <button type="button" class="info-link" onclick="openModal('cylinderModal')" style="background: none; border: none; font-size: 0.95rem;">Why make a cylinder?</button>
+        </div>
+
     <!-- 1. Universal Settings -->
     <div class="form-group">
         <label>Unit System:</label>
         <select id="unitSystem">
             <option value="imperial" selected>Inches</option>
             <option value="metric">Centimeters</option>
-        </select>
-    </div>
-
-    <!-- 2. Shape Selection -->
-    <div class="form-group">
-        <div class="label-row">
-            <label>Shape:</label>
-            <button type="button" class="info-link" onclick="openModal('cylinderModal')">Why make a cylinder?</button>
-        </div>
-        <select id="shapeSelect" disabled>
-            <option value="cylinder" selected>Cylinder</option>
         </select>
     </div>
 
@@ -61,7 +55,7 @@
         <input type="number" id="hookSize" value="3.0" min="0.5" max="35.0" step="0.5">
     </div>
 
-    <!-- 3. Cylinder-Specific Fields Container -->
+    <!-- 2. Cylinder-Specific Fields Container -->
     <div id="shapeFields" class="conditional-fields">
         <div id="cylinderFields" class="shape-input-group">
 
@@ -104,7 +98,7 @@
         </div>
     </div>
 
-    <!-- 4. Cylinder Configuration Options -->
+    <!-- 3. Cylinder Configuration Options -->
     <div class="form-group">
         <div class="label-row">
             <label>Ends Configuration:</label>

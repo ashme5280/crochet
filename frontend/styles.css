@@ -27,6 +27,17 @@ h2 {
     text-decoration: underline;
     color: #1e1b4b;
 }
+.nav-links .info-link {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #2563eb;
+    cursor: pointer;
+    vertical-align: super;
+    margin-left: 2px;
+}
+.nav-links .info-link:hover {
+    text-decoration: underline;
+}
 .form-group {
     margin-bottom: 15px;
 }
