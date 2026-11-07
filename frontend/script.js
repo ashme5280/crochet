@@ -1,3 +1,5 @@
+const API_BASE_URL = "https://ashme5280-amigurumi-api.onrender.com";
+
 document.addEventListener('DOMContentLoaded', () => {
     // --- 1. Modal Event Listeners ---
     setupModalTriggers();
@@ -38,6 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 generateCylinderPattern();
             } else if (window.location.pathname.includes('cone') || document.getElementById('coneWidthMode')) {
                 generateConePattern();
+            } else if (window.location.pathname.includes('oval') || document.getElementById('ovalLength')) {
+                generateOvalPattern();
             } else {
                 generatePattern();
             }
@@ -193,7 +197,7 @@ async function generatePattern() {
         queryParams += `&max_stitches=${stitches}`;
     }
 
-    const url = `http://127.0.0.1:8000/sphere/${queryParams}`;
+    const url = `${API_BASE_URL}/sphere/${queryParams}`;
 
     const outputDiv = document.getElementById('outputResults');
     outputDiv.innerHTML = "<p>Generating your custom pattern...</p>";
@@ -297,7 +301,7 @@ async function generateCylinderPattern() {
         queryParams += `&height_rounds=${rows}`;
     }
 
-    const url = `http://127.0.0.1:8000/cylinder/${queryParams}`;
+    const url = `${API_BASE_URL}/cylinder/${queryParams}`;
 
     const outputDiv = document.getElementById('outputResults');
     outputDiv.innerHTML = "<p>Generating your custom cylinder pattern...</p>";
@@ -399,7 +403,7 @@ async function generateConePattern() {
         queryParams += `&height_rounds=${rows}`;
     }
 
-    const url = `http://127.0.0.1:8000/cone/${queryParams}`;
+    const url = `${API_BASE_URL}/cone/${queryParams}`;
 
     const outputDiv = document.getElementById('outputResults');
     outputDiv.innerHTML = "<p>Generating your custom cone pattern...</p>";
@@ -415,7 +419,6 @@ async function generateConePattern() {
         let diamVal = unit === 'imperial' ? data.dimensions?.diameter_inches : data.dimensions?.diameter_cm;
         let heightVal = unit === 'imperial' ? data.dimensions?.height_inches : data.dimensions?.height_cm;
         let unitStr = unit === 'imperial' ? 'inches' : 'cm';
-        let estimatedYarnVal = data.supplies_you_need?.estimated_yarn || data.estimated_yarn || data.yarn_yards || 'Check pattern specs';
 
         let html = `<h3>Pattern Specifications</h3>`;
         html += `<div class="metrics-card">`;
@@ -484,7 +487,7 @@ async function generateOvalPattern() {
     let queryParams = `?yarn_weight=${encodeURIComponent(yarn)}&hook_size_mm=${encodeURIComponent(hook)}&stuffing=${isStuffing}`;
     queryParams += unit === 'imperial' ? `&max_length_inches=${lengthVal}&max_height_inches=${heightVal}` : `&max_length_cm=${lengthVal}&max_height_cm=${heightVal}`;
 
-    const url = `http://127.0.0.1:8000/oval/${queryParams}`;
+    const url = `${API_BASE_URL}/oval/${queryParams}`;
 
     const outputDiv = document.getElementById('outputResults');
     outputDiv.innerHTML = "<p>Generating your custom oval pattern...</p>";
@@ -497,25 +500,24 @@ async function generateOvalPattern() {
         }
         const data = await response.json();
 
-        // Safely extract dimensions matching the Python backend keys
-                let lengthDim = unit === 'imperial' ? data.dimensions?.max_length_inches : data.dimensions?.max_length_cm;
-                let widthDim = unit === 'imperial' ? data.dimensions?.max_width_inches : data.dimensions?.max_width_cm;
-                let heightDim = unit === 'imperial' ? data.dimensions?.height_inches : data.dimensions?.height_cm;
-                let unitStr = unit === 'imperial' ? 'inches' : 'cm';
+        let lengthDim = unit === 'imperial' ? data.dimensions?.max_length_inches : data.dimensions?.max_length_cm;
+        let widthDim = unit === 'imperial' ? data.dimensions?.max_width_inches : data.dimensions?.max_width_cm;
+        let heightDim = unit === 'imperial' ? data.dimensions?.height_inches : data.dimensions?.height_cm;
+        let unitStr = unit === 'imperial' ? 'inches' : 'cm';
 
-                let html = `<h3>Pattern Specifications</h3>`;
-                html += `<div class="metrics-card">`;
-                html += `<p><strong>Total Rounds:</strong> ${data.total_rounds || 'N/A'}</p>`;
-                html += `<p><strong>Finished Length:</strong> ~${lengthDim || 'N/A'} ${unitStr}</p>`;
-                html += `<p><strong>Finished Width:</strong> ~${widthDim || 'N/A'} ${unitStr}</p>`;
-                html += `<p><strong>Calculated Height:</strong> ~${heightDim || 'N/A'} ${unitStr}</p>`;
-                html += `<p><strong>Supplies You Need:</strong></p>`;
-                html += `<ul class="supplies-list">`;
-                html += `<li><strong>Estimated Yarn:</strong> ${data.supplies_you_need?.estimated_yarn || 'N/A'}</li>`;
-                html += `<li><strong>Hook:</strong> ${data.supplies_you_need?.hook || hook + ' mm'}</li>`;
-                html += `<li><strong>Stuffing Needed:</strong> ${data.supplies_you_need?.stuffing_volume || 'Standard'}</li>`;
-                html += `</ul>`;
-                html += `</div>`;
+        let html = `<h3>Pattern Specifications</h3>`;
+        html += `<div class="metrics-card">`;
+        html += `<p><strong>Total Rounds:</strong> ${data.total_rounds || 'N/A'}</p>`;
+        html += `<p><strong>Finished Length:</strong> ~${lengthDim || 'N/A'} ${unitStr}</p>`;
+        html += `<p><strong>Finished Width:</strong> ~${widthDim || 'N/A'} ${unitStr}</p>`;
+        html += `<p><strong>Calculated Height:</strong> ~${heightDim || 'N/A'} ${unitStr}</p>`;
+        html += `<p><strong>Supplies You Need:</strong></p>`;
+        html += `<ul class="supplies-list">`;
+        html += `<li><strong>Estimated Yarn:</strong> ${data.supplies_you_need?.estimated_yarn || 'N/A'}</li>`;
+        html += `<li><strong>Hook:</strong> ${data.supplies_you_need?.hook || hook + ' mm'}</li>`;
+        html += `<li><strong>Stuffing Needed:</strong> ${data.supplies_you_need?.stuffing_volume || 'Standard'}</li>`;
+        html += `</ul>`;
+        html += `</div>`;
 
         html += `<h3>Round-by-Round Instructions</h3><ul class="pattern-list" id="ovalPatternList">`;
         if (data.pattern && Array.isArray(data.pattern)) {
