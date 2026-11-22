@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-from generators import sphere, cylinder, cone, oval
+from generators import sphere, cylinder, cone, oval, egg
 
 app = FastAPI(
     title="Amigurumi Component Generator API",
@@ -24,6 +24,7 @@ app.include_router(sphere.router)
 app.include_router(cylinder.router)
 app.include_router(cone.router)
 app.include_router(oval.router)
+app.include_router(egg.router)
 
 # 1. Serve sphere.html as the root home page
 @app.get("/")
