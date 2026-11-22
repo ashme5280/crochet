@@ -183,13 +183,14 @@
     <div class="form-group">
         <div class="label-row">
             <label>Shape:</label>
-            <button type="button" class="info-link" onclick="openModal('sphereModal')">Why make a sphere?</button>
+            <button type="button" class="info-link" id="shapeInfoBtn" onclick="openModal('sphereModal')">Why make a sphere?</button>
         </div>
         <select id="shapeSelect">
             <option value="sphere" selected>Sphere</option>
             <option value="cylinder">Cylinder</option>
             <option value="cone">Cone</option>
             <option value="oval">Oval</option>
+            <option value="egg">Egg</option>
         </select>
     </div>
 
@@ -211,7 +212,7 @@
     <div class="form-group">
         <div class="label-row">
             <label>Hook Size (mm):</label>
-            <button type="button" class="info-link" onclick="openModal('hookModal')">Amigurumi Yarn & Hook Guide</button>
+            <button type="button" class="info-link" onclick="openModal('hookModal')">Amigurumi Yarn &amp; Hook Guide</button>
         </div>
         <input type="number" id="hookSize" value="3.0" step="0.5">
     </div>
@@ -286,10 +287,36 @@
                 <input type="number" id="ovalWidth" value="3.5" step="0.5">
             </div>
         </div>
+
+        <!-- Egg Fields -->
+        <div id="eggFields" class="shape-input-group" style="display: none;">
+            <div class="form-group">
+                <label>Input Mode:</label>
+                <select id="eggInputMode">
+                    <option value="diameter" selected>Target Max Diameter</option>
+                    <option value="stitches">Max Equator Stitches</option>
+                </select>
+            </div>
+            <div class="form-group" id="eggDiamGroup">
+                <label id="eggDiamLabel">Target Max Diameter (inches):</label>
+                <input type="number" id="eggDiameter" value="2.5" step="0.25">
+            </div>
+            <div class="form-group" id="eggStitchGroup">
+                <label id="eggStitchLabel">Max Equator Stitches (e.g., 36, 42):</label>
+                <input type="number" id="eggStitches" value="36" step="6" disabled>
+            </div>
+            <div class="form-group">
+                <label>Shell Mode:</label>
+                <select id="eggShellMode">
+                    <option value="Whole shell" selected>Whole shell</option>
+                    <option value="Split in half">Split in half</option>
+                </select>
+            </div>
+        </div>
     </div>
 
     <!-- 4. Feature Toggles (Safety Eyes & Stuffing) -->
-    <div class="form-group">
+    <div class="form-group" id="safetyEyesGroup">
         <div class="label-row">
             <label>Add Safety Eyes?</label>
             <button type="button" class="info-link" onclick="openModal('eyesModal')">Safety Eye Sizing Matrix</button>
@@ -302,7 +329,7 @@
         </select>
     </div>
 
-    <div class="form-group">
+    <div class="form-group" id="stuffingGroup">
         <label>Add Stuffing Instructions?</label>
         <select id="stuffingOpt">
             <option value="yes" selected>Yes</option>
@@ -323,18 +350,18 @@
             <p>Crocheting a sphere is probably the most fundamental technique in amigurumi. While making the heads and bodies for stuffed figures is the most common application, the underlying geometry of a crocheted sphere lends itself to a wide variety of practical, and creative uses.</p>
             <p><button type="button" class="info-link" onclick="toggleSphereIdeas()" id="sphereIdeasToggle">Need Ideas? ▼</button></p>
             <div id="sphereIdeasContent" style="display: none; margin-top: 10px;">
-                <h4>Classic & Primary Uses</h4>
+                <h4>Classic &amp; Primary Uses</h4>
                 <p><strong>Amigurumi Anatomy:</strong></p>
                 <ul>
-                    <li><strong>Heads & Bodies:</strong> The most frequent use in toy-making. Spheres serve as the base for heads, torsos, or belly sections of animals, dolls, and fantasy creatures.</li>
-                    <li><strong>Limbs & Features:</strong> Small spheres (or hemisphere variations) form paws, snout bases, cheek puffs, tail ends, or rounded ears.</li>
+                    <li><strong>Heads &amp; Bodies:</strong> The most frequent use in toy-making. Spheres serve as the base for heads, torsos, or belly sections of animals, dolls, and fantasy creatures.</li>
+                    <li><strong>Limbs &amp; Features:</strong> Small spheres (or hemisphere variations) form paws, snout bases, cheek puffs, tail ends, or rounded ears.</li>
                 </ul>
                 <p><strong>Toys:</strong></p>
                 <ul>
                     <li>Balls for Children: Hacky sacks, sensory play balls, soft infant rattles (when fitted with an internal rattle box or bell), or colorful play sets.</li>
                 </ul>
 
-                <h4>Decorative & Seasonal Uses</h4>
+                <h4>Decorative &amp; Seasonal Uses</h4>
                 <p><strong>Holiday Ornaments:</strong></p>
                 <ul>
                     <li>Baubles for Christmas trees, hanging garlands, or autumn pumpkins (by pulling a thread down through the center of an orange sphere to indent the top and bottom).</li>
@@ -343,22 +370,22 @@
                 <ul>
                     <li><strong>Decorative Bowl Fillers:</strong> Multi-textured or multi-colored yarn spheres arranged in decorative glass bowls or trays.</li>
                     <li><strong>Botanical Components:</strong> Crocheted cacti, succulents, flower centers, or berries.</li>
-                    <li><strong>Garlands & Mobiles:</strong> Strung together with beads or tassels for nursery ceiling mobiles or wall hangings.</li>
+                    <li><strong>Garlands &amp; Mobiles:</strong> Strung together with beads or tassels for nursery ceiling mobiles or wall hangings.</li>
                 </ul>
 
                 <h4>Creative Uses</h4>
-                <p><strong>Stress Relief & Ergonomics:</strong></p>
+                <p><strong>Stress Relief &amp; Ergonomics:</strong></p>
                 <ul>
                     <li><strong>Stress Balls:</strong> Stuffed with high-density materials or memory foam scraps to squeeze for hand therapy and stress relief.</li>
                     <li><strong>Ergonomic Wrist Rests:</strong> Small, slightly flattened spheres filled with plastic poly-pellets or dried beans to support wrists while using a computer mouse or keyboard.</li>
                 </ul>
-                <p><strong>Interactive & Functional Household Items:</strong></p>
+                <p><strong>Interactive &amp; Functional Household Items:</strong></p>
                 <ul>
                     <li><strong>Pincushions:</strong> Compact, tightly stitched spheres (or hemisphere bases) make sturdy pincushions for sewing and embroidery needles.</li>
                 </ul>
-                <p><strong>Educational & Conceptual Models:</strong></p>
+                <p><strong>Educational &amp; Conceptual Models:</strong></p>
                 <ul>
-                    <li><strong>Astronomy & Science Models:</strong> Scaled representations of planets, moons, or cellular/atomic structures for teaching or display.</li>
+                    <li><strong>Astronomy &amp; Science Models:</strong> Scaled representations of planets, moons, or cellular/atomic structures for teaching or display.</li>
                 </ul>
             </div>
         </div>
@@ -434,7 +461,7 @@
     <div id="hookModal" class="modal-overlay">
         <div class="modal-card">
             <button class="modal-close" onclick="closeModal('hookModal')">&times;</button>
-            <h3>Amigurumi Yarn & Hook Guide</h3>
+            <h3>Amigurumi Yarn &amp; Hook Guide</h3>
 
             <h4 style="margin-top:15px; color:#2c3e50;">What type of yarn should I use specifically for Amigurumi?</h4>
             <p>Standard crochet patterns (like blankets or garments) use larger hooks to create a soft, flexible drape. Amigurumi requires a tight, dense fabric so the fiberfill stuffing doesn't poke out through the stitches. The golden rule for amigurumi is to drop 1 to 3 hook sizes (0.5 mm - 1.5 mm smaller) than what the yarn skein label recommends.</p>
@@ -449,7 +476,7 @@
                         <li><em>Chenille / Velvet Yarns:</em> Notoriously tricky because pulling stitches too tight can cause "snagging" or breaking the core thread. Using a 5.0 mm – 6.5 mm hook is usually the sweet spot to keep it plush without losing shape.</li>
                     </ul>
                 </li>
-                <li><strong>Stitch Tension & Style:</strong> If you use the "Yarn Under, Yarn Over" (X-stitch) method instead of standard "Yarn Over, Yarn Over" (V-stitch), your stitches naturally sit tighter, allowing you to use a slightly larger hook while keeping the fabric dense.</li>
+                <li><strong>Stitch Tension &amp; Style:</strong> If you use the "Yarn Under, Yarn Over" (X-stitch) method instead of standard "Yarn Over, Yarn Over" (V-stitch), your stitches naturally sit tighter, allowing you to use a slightly larger hook while keeping the fabric dense.</li>
             </ul>
 
             <h4 style="margin-top:20px; color:#2c3e50;">What hook should I use specifically for Amigurumi?</h4>
@@ -573,6 +600,16 @@
         if (sphereInputModeSelect) {
             sphereInputModeSelect.addEventListener('change', toggleSphereInputMode);
         }
+
+        const eggInputModeSelect = document.getElementById('eggInputMode');
+        if (eggInputModeSelect) {
+            eggInputModeSelect.addEventListener('change', toggleEggInputMode);
+        }
+
+        const eggShellModeSelect = document.getElementById('eggShellMode');
+        if (eggShellModeSelect) {
+            eggShellModeSelect.addEventListener('change', updateFeatureVisibility);
+        }
     });
 
     function updateUnits() {
@@ -599,6 +636,9 @@
 
         const ovalWidthLabel = document.getElementById('ovalWidthLabel');
         if (ovalWidthLabel) ovalWidthLabel.innerText = `Target Width (${unitLabel}):`;
+
+        const eggDiamLabel = document.getElementById('eggDiamLabel');
+        if (eggDiamLabel) eggDiamLabel.innerText = `Target Max Diameter (${unitLabel}):`;
     }
 
     function toggleShapeFields() {
@@ -607,12 +647,50 @@
         document.getElementById('cylinderFields').style.display = shape === 'cylinder' ? 'block' : 'none';
         document.getElementById('coneFields').style.display = shape === 'cone' ? 'block' : 'none';
         document.getElementById('ovalFields').style.display = shape === 'oval' ? 'block' : 'none';
+        document.getElementById('eggFields').style.display = shape === 'egg' ? 'block' : 'none';
+
+        updateFeatureVisibility();
+    }
+
+    function updateFeatureVisibility() {
+        const shape = document.getElementById('shapeSelect').value;
+        const safetyEyesGroup = document.getElementById('safetyEyesGroup');
+        const stuffingGroup = document.getElementById('stuffingGroup');
+
+        // Safety eyes only apply to shapes that support them (not egg)
+        if (safetyEyesGroup) {
+            safetyEyesGroup.style.display = shape === 'egg' ? 'none' : 'block';
+        }
+
+        // Stuffing only applies to Egg when "Whole shell" is selected
+        if (stuffingGroup) {
+            if (shape === 'egg') {
+                const shellMode = document.getElementById('eggShellMode').value;
+                stuffingGroup.style.display = shellMode === 'Whole shell' ? 'block' : 'none';
+            } else {
+                stuffingGroup.style.display = 'block';
+            }
+        }
     }
 
     function toggleSphereInputMode() {
         const mode = document.getElementById('sphereInputMode').value;
         const diamInput = document.getElementById('sphereDiameter');
         const stitchInput = document.getElementById('sphereStitches');
+
+        if (mode === 'diameter') {
+            diamInput.disabled = false;
+            stitchInput.disabled = true;
+        } else {
+            diamInput.disabled = true;
+            stitchInput.disabled = false;
+        }
+    }
+
+    function toggleEggInputMode() {
+        const mode = document.getElementById('eggInputMode').value;
+        const diamInput = document.getElementById('eggDiameter');
+        const stitchInput = document.getElementById('eggStitches');
 
         if (mode === 'diameter') {
             diamInput.disabled = false;
@@ -631,7 +709,11 @@
         const safetyOpt = document.getElementById('safetyEyesOpt').value;
         const stuffingOpt = document.getElementById('stuffingOpt').value;
 
-        let queryParams = `?yarn_weight=${encodeURIComponent(yarn)}&hook_size_mm=${encodeURIComponent(hook)}&safety_eyes=${encodeURIComponent(safetyOpt)}&stuffing=${encodeURIComponent(stuffingOpt)}`;
+        let queryParams = `?yarn_weight=${encodeURIComponent(yarn)}&hook_size_mm=${encodeURIComponent(hook)}`;
+
+        if (shape !== 'egg') {
+            queryParams += `&safety_eyes=${encodeURIComponent(safetyOpt)}&stuffing=${encodeURIComponent(stuffingOpt)}`;
+        }
 
         if (shape === 'sphere') {
             const mode = document.getElementById('sphereInputMode').value;
@@ -658,6 +740,19 @@
             const length = document.getElementById('ovalLength').value;
             const width = document.getElementById('ovalWidth').value;
             queryParams += unit === 'imperial' ? `&target_length_inches=${length}&target_width_inches=${width}` : `&target_length_cm=${length}&target_width_cm=${width}`;
+        } else if (shape === 'egg') {
+            const mode = document.getElementById('eggInputMode').value;
+            const shellMode = document.getElementById('eggShellMode').value;
+            const eggStuffing = shellMode === 'Whole shell' ? stuffingOpt : 'no';
+
+            queryParams += `&shell_mode=${encodeURIComponent(shellMode)}&stuffing=${encodeURIComponent(eggStuffing)}`;
+            if (mode === 'diameter') {
+                const diam = document.getElementById('eggDiameter').value;
+                queryParams += unit === 'imperial' ? `&max_diameter_inches=${diam}` : `&max_diameter_cm=${diam}`;
+            } else {
+                const stitches = document.getElementById('eggStitches').value;
+                queryParams += `&max_diameter_stitches=${stitches}`;
+            }
         }
 
         const url = `http://127.0.0.1:8000/${shape}/${queryParams}`;
@@ -673,26 +768,62 @@
             }
             const data = await response.json();
 
-            let sizeStr = unit === 'imperial' ? `${data.dimensions.diameter_inches || data.dimensions.length_inches} inches` : `${data.dimensions.diameter_cm || data.dimensions.length_cm} cm`;
+            const unitStr = unit === 'imperial' ? 'inches' : 'cm';
+            const sizeVal = unit === 'imperial'
+                ? (data.dimensions.diameter_inches || data.dimensions.length_inches)
+                : (data.dimensions.diameter_cm || data.dimensions.length_cm);
+            const heightVal = unit === 'imperial' ? data.dimensions.height_inches : data.dimensions.height_cm;
 
             let html = `<h3>Pattern Specifications</h3>`;
             html += `<div class="metrics-card">`;
+            if (shape === 'egg' && data.parameters?.shell_mode) {
+                html += `<p><strong>Shell Mode:</strong> ${data.parameters.shell_mode}</p>`;
+            }
             html += `<p><strong>Total Rounds:</strong> ${data.total_rounds}</p>`;
-            html += `<p><strong>Finished Size:</strong> ~${sizeStr}</p>`;
+            html += `<p><strong>Finished ${shape === 'egg' ? 'Max Diameter' : 'Size'}:</strong> ~${sizeVal} ${unitStr}</p>`;
+            if (shape === 'egg' && heightVal) {
+                html += `<p><strong>Calculated Height:</strong> ~${heightVal} ${unitStr}</p>`;
+            }
             html += `<p><strong>Supplies You Need:</strong></p>`;
             html += `<ul class="supplies-list">`;
             html += `<li><strong>Estimated Yarn:</strong> ${data.supplies_you_need.estimated_yarn}</li>`;
             html += `<li><strong>Hook:</strong> ${data.supplies_you_need.hook}</li>`;
-            html += `<li><strong>Safety Eyes:</strong> ${data.supplies_you_need.safety_eyes}</li>`;
-            html += `<li><strong>Stuffing:</strong> ${data.supplies_you_need.stuffing_volume}</li>`;
+            if (data.supplies_you_need.safety_eyes) {
+                html += `<li><strong>Safety Eyes:</strong> ${data.supplies_you_need.safety_eyes}</li>`;
+            }
+            if (!(shape === 'egg' && document.getElementById('eggShellMode').value === 'Split in half')) {
+                html += `<li><strong>Stuffing:</strong> ${data.supplies_you_need.stuffing_volume}</li>`;
+            }
             html += `</ul>`;
             html += `</div>`;
 
-            html += `<h3>Round-by-Round Instructions</h3><ul class="pattern-list">`;
-            data.pattern.forEach(step => {
-                html += `<li>${step.instruction}</li>`;
-            });
-            html += `</ul>`;
+            html += `<h3>Round-by-Round Instructions</h3>`;
+            if (shape === 'egg' && document.getElementById('eggShellMode').value === 'Split in half') {
+                const topSteps = data.pattern.filter(s => s.phase && s.phase.startsWith('top_half'));
+                const bottomSteps = data.pattern.filter(s => s.phase && s.phase.startsWith('bottom_half'));
+
+                html += `<h4>Part 1: Top Half (Pointed Crown)</h4><ul class="pattern-list">`;
+                topSteps.forEach(step => {
+                    html += `<li>${step.instruction}</li>`;
+                });
+                html += `</ul>`;
+
+                html += `<h4>Part 2: Bottom Half (Rounded Base)</h4><ul class="pattern-list">`;
+                bottomSteps.forEach(step => {
+                    html += `<li>${step.instruction}</li>`;
+                });
+                html += `</ul>`;
+            } else {
+                html += `<ul class="pattern-list">`;
+                data.pattern.forEach(step => {
+                    html += `<li>${step.instruction}`;
+                    if (step.stuffing_instruction) {
+                        html += `<div style="color: #64748b; font-size: 0.9em; margin-top: 4px;">💡 ${step.stuffing_instruction}</div>`;
+                    }
+                    html += `</li>`;
+                });
+                html += `</ul>`;
+            }
 
             outputDiv.innerHTML = html;
         } catch (error) {

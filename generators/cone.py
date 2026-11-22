@@ -1,45 +1,25 @@
 from enum import Enum
 from fastapi import APIRouter, Query, HTTPException
 import math
+from constants import (
+    YarnWeight,
+    StuffingOption,
+    CM_PER_INCH,
+    YARN_INCHES_PER_STITCH,
+    YARN_STITCH_HEIGHT_INCHES,
+    YARN_STITCH_WIDTH_INCHES,
+    YARN_GRAMS_PER_YARD,
+    HOOK_LABEL_MAP,
+    get_hook_label,
+)
 
 router = APIRouter(prefix="/cone", tags=["Cones"])
-
-class YarnWeight(str, Enum):
-    fingering = "fingering"
-    sport = "sport"
-    dk = "dk"
-    worsted = "worsted"
-    bulky = "bulky"
-    super_bulky = "super_bulky"
 
 class ConeShape(str, Enum):
     narrow = "narrow"     # 2 increases per round (pointy)
     medium = "medium"     # 3 increases per round (standard)
     wide = "wide"         # 5 increases per round (shallow/flared)
 
-YARN_INCHES_PER_STITCH = {
-    "fingering": 1.3, "sport": 1.8, "dk": 2.0,
-    "worsted": 2.5, "bulky": 3.8, "super_bulky": 5.0
-}
-
-YARN_STITCH_HEIGHT_INCHES = {
-    "fingering": 0.15,
-    "sport": 0.20,
-    "dk": 0.22,
-    "worsted": 0.28,
-    "bulky": 0.40,
-    "super_bulky": 0.55
-}
-
-YARN_STITCH_WIDTH_INCHES = {
-    "fingering": 0.18, "sport": 0.22, "dk": 0.25,
-    "worsted": 0.30, "bulky": 0.42, "super_bulky": 0.58
-}
-
-YARN_GRAMS_PER_YARD = {
-    "fingering": 2.5, "sport": 3.0, "dk": 3.5,
-    "worsted": 4.5, "bulky": 6.5, "super_bulky": 9.0
-}
 
 def calculate_cone_metrics(instructions, total_stitch_count, weight_key, hook_size_mm, max_stitches, cone_shape):
     base_width = YARN_STITCH_WIDTH_INCHES.get(weight_key, 0.25)

@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
         unitSystemSelect.addEventListener('change', () => {
             updateUnits();         // For sphere page
             updateCylinderUnits(); // For cylinder page
+            updateEggUnits();      // For egg page
         });
     }
 
@@ -28,16 +29,31 @@ document.addEventListener('DOMContentLoaded', () => {
         cylinderHeightMode.addEventListener('change', toggleCylinderHeightMode);
     }
 
-    // --- 5. Generate Button (Universal Handler) ---
+    // --- 5. Egg Input Mode & Shell Mode Switching ---
+    const eggInputMode = document.getElementById('eggInputMode');
+    if (eggInputMode) {
+        eggInputMode.addEventListener('change', toggleEggInputMode);
+    }
+
+    const eggShellMode = document.getElementById('eggShellMode');
+    if (eggShellMode) {
+        eggShellMode.addEventListener('change', toggleEggShellMode);
+        toggleEggShellMode(); // Ensure correct visibility on initial page load
+    }
+
+    // --- 6. Generate Button (Universal Handler) ---
     const generateBtn = document.getElementById('generateBtn');
     if (generateBtn) {
         generateBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            // Check shape context explicitly based on path or available DOM elements
             if (window.location.pathname.includes('cylinder') || document.getElementById('cylinderWidthMode')) {
                 generateCylinderPattern();
             } else if (window.location.pathname.includes('cone') || document.getElementById('coneWidthMode')) {
                 generateConePattern();
+            } else if (window.location.pathname.includes('oval') || document.getElementById('ovalLength')) {
+                generateOvalPattern();
+            } else if (window.location.pathname.includes('egg') || document.getElementById('eggInputMode')) {
+                generateEggPattern();
             } else {
                 generatePattern();
             }
@@ -103,6 +119,20 @@ function toggleCylinderIdeas() {
     }
 }
 
+function toggleEggIdeas() {
+    const content = document.getElementById('eggIdeasContent');
+    const toggleBtn = document.getElementById('eggIdeasToggle');
+    if (content && toggleBtn) {
+        if (content.style.display === 'none' || content.style.display === '') {
+            content.style.display = 'block';
+            toggleBtn.innerText = 'Need Ideas? ▲';
+        } else {
+            content.style.display = 'none';
+            toggleBtn.innerText = 'Need Ideas? ▼';
+        }
+    }
+}
+
 // --- Dynamic Unit Conversion Labels ---
 function updateUnits() {
     const unit = document.getElementById('unitSystem').value;
@@ -123,6 +153,16 @@ function updateCylinderUnits() {
 
     if (diamLabel) diamLabel.innerText = `Target Diameter (${unitLabel}):`;
     if (heightLabel) heightLabel.innerText = `Target Height (${unitLabel}):`;
+}
+
+function updateEggUnits() {
+    const unit = document.getElementById('unitSystem').value;
+    const unitLabel = unit === 'imperial' ? 'inches' : 'centimeters';
+
+    const diamLabel = document.getElementById('eggDiamLabel');
+    if (diamLabel) {
+        diamLabel.innerText = `Target Max Diameter (${unitLabel}):`;
+    }
 }
 
 // --- Input Mode Toggles ---
@@ -171,6 +211,36 @@ function toggleCylinderHeightMode() {
             heightGroup.style.display = 'none';
             rowsGroup.style.display = 'block';
         }
+    }
+}
+
+function toggleEggInputMode() {
+    const mode = document.getElementById('eggInputMode').value;
+    const diamGroup = document.getElementById('eggDiamGroup');
+    const stitchGroup = document.getElementById('eggStitchGroup');
+
+    if (diamGroup && stitchGroup) {
+        if (mode === 'diameter') {
+            diamGroup.style.display = 'block';
+            stitchGroup.style.display = 'none';
+        } else {
+            diamGroup.style.display = 'none';
+            stitchGroup.style.display = 'block';
+        }
+    }
+}
+
+function toggleEggShellMode() {
+    const shellMode = document.getElementById('eggShellMode')?.value;
+    const stuffingDetails = document.getElementById('eggStuffingDetails');
+    const stuffingGroup = document.getElementById('eggStuffingGroup');
+    const isWhole = shellMode === 'Whole shell';
+
+    if (stuffingDetails) {
+        stuffingDetails.style.display = isWhole ? 'block' : 'none';
+    }
+    if (stuffingGroup) {
+        stuffingGroup.style.display = isWhole ? 'block' : 'none';
     }
 }
 
@@ -243,7 +313,6 @@ async function generatePattern() {
 
         outputDiv.innerHTML = html;
 
-        // --- Interactive Checkbox Strikethrough Effect ---
         const checkboxes = outputDiv.querySelectorAll('.row-checkbox');
         checkboxes.forEach(checkbox => {
             checkbox.addEventListener('change', (e) => {
@@ -277,7 +346,6 @@ async function generateCylinderPattern() {
 
     let queryParams = `?yarn_weight=${encodeURIComponent(yarn)}&hook_size_mm=${encodeURIComponent(hook)}&closed=${isClosed}&stuffing=${isStuffing}`;
 
-    // Width/Diameter parameters
     const widthMode = document.getElementById('cylinderWidthMode').value;
     if (widthMode === 'diameter') {
         const val = document.getElementById('cylinderDiameter').value;
@@ -287,7 +355,6 @@ async function generateCylinderPattern() {
         queryParams += `&target_stitches=${stitches}`;
     }
 
-    // Height/Rows parameters
     const heightMode = document.getElementById('cylinderHeightMode').value;
     if (heightMode === 'height') {
         const val = document.getElementById('cylinderHeight').value;
@@ -348,7 +415,6 @@ async function generateCylinderPattern() {
 
         outputDiv.innerHTML = html;
 
-        // --- Interactive Checkbox Strikethrough Effect for Cylinder ---
         const checkboxes = outputDiv.querySelectorAll('.row-checkbox');
         checkboxes.forEach(checkbox => {
             checkbox.addEventListener('change', (e) => {
@@ -379,7 +445,6 @@ async function generateConePattern() {
 
     let queryParams = `?yarn_weight=${encodeURIComponent(yarn)}&hook_size_mm=${encodeURIComponent(hook)}&tip_style=${encodeURIComponent(tipOpt)}&stuffing=${isStuffing}`;
 
-    // Width parameters
     const widthMode = document.getElementById('coneWidthMode').value;
     if (widthMode === 'diameter') {
         const val = document.getElementById('coneDiameter').value;
@@ -389,7 +454,6 @@ async function generateConePattern() {
         queryParams += `&target_base_stitches=${stitches}`;
     }
 
-    // Height parameters
     const heightMode = document.getElementById('coneHeightMode').value;
     if (heightMode === 'height') {
         const val = document.getElementById('coneHeight').value;
@@ -415,7 +479,6 @@ async function generateConePattern() {
         let diamVal = unit === 'imperial' ? data.dimensions?.diameter_inches : data.dimensions?.diameter_cm;
         let heightVal = unit === 'imperial' ? data.dimensions?.height_inches : data.dimensions?.height_cm;
         let unitStr = unit === 'imperial' ? 'inches' : 'cm';
-        let estimatedYarnVal = data.supplies_you_need?.estimated_yarn || data.estimated_yarn || data.yarn_yards || 'Check pattern specs';
 
         let html = `<h3>Pattern Specifications</h3>`;
         html += `<div class="metrics-card">`;
@@ -451,7 +514,6 @@ async function generateConePattern() {
 
         outputDiv.innerHTML = html;
 
-        // --- Interactive Checkbox Strikethrough Effect for Cone ---
         const checkboxes = outputDiv.querySelectorAll('.row-checkbox');
         checkboxes.forEach(checkbox => {
             checkbox.addEventListener('change', (e) => {
@@ -497,25 +559,24 @@ async function generateOvalPattern() {
         }
         const data = await response.json();
 
-        // Safely extract dimensions matching the Python backend keys
-                let lengthDim = unit === 'imperial' ? data.dimensions?.max_length_inches : data.dimensions?.max_length_cm;
-                let widthDim = unit === 'imperial' ? data.dimensions?.max_width_inches : data.dimensions?.max_width_cm;
-                let heightDim = unit === 'imperial' ? data.dimensions?.height_inches : data.dimensions?.height_cm;
-                let unitStr = unit === 'imperial' ? 'inches' : 'cm';
+        let lengthDim = unit === 'imperial' ? data.dimensions?.max_length_inches : data.dimensions?.max_length_cm;
+        let widthDim = unit === 'imperial' ? data.dimensions?.max_width_inches : data.dimensions?.max_width_cm;
+        let heightDim = unit === 'imperial' ? data.dimensions?.height_inches : data.dimensions?.height_cm;
+        let unitStr = unit === 'imperial' ? 'inches' : 'cm';
 
-                let html = `<h3>Pattern Specifications</h3>`;
-                html += `<div class="metrics-card">`;
-                html += `<p><strong>Total Rounds:</strong> ${data.total_rounds || 'N/A'}</p>`;
-                html += `<p><strong>Finished Length:</strong> ~${lengthDim || 'N/A'} ${unitStr}</p>`;
-                html += `<p><strong>Finished Width:</strong> ~${widthDim || 'N/A'} ${unitStr}</p>`;
-                html += `<p><strong>Calculated Height:</strong> ~${heightDim || 'N/A'} ${unitStr}</p>`;
-                html += `<p><strong>Supplies You Need:</strong></p>`;
-                html += `<ul class="supplies-list">`;
-                html += `<li><strong>Estimated Yarn:</strong> ${data.supplies_you_need?.estimated_yarn || 'N/A'}</li>`;
-                html += `<li><strong>Hook:</strong> ${data.supplies_you_need?.hook || hook + ' mm'}</li>`;
-                html += `<li><strong>Stuffing Needed:</strong> ${data.supplies_you_need?.stuffing_volume || 'Standard'}</li>`;
-                html += `</ul>`;
-                html += `</div>`;
+        let html = `<h3>Pattern Specifications</h3>`;
+        html += `<div class="metrics-card">`;
+        html += `<p><strong>Total Rounds:</strong> ${data.total_rounds || 'N/A'}</p>`;
+        html += `<p><strong>Finished Length:</strong> ~${lengthDim || 'N/A'} ${unitStr}</p>`;
+        html += `<p><strong>Finished Width:</strong> ~${widthDim || 'N/A'} ${unitStr}</p>`;
+        html += `<p><strong>Calculated Height:</strong> ~${heightDim || 'N/A'} ${unitStr}</p>`;
+        html += `<p><strong>Supplies You Need:</strong></p>`;
+        html += `<ul class="supplies-list">`;
+        html += `<li><strong>Estimated Yarn:</strong> ${data.supplies_you_need?.estimated_yarn || 'N/A'}</li>`;
+        html += `<li><strong>Hook:</strong> ${data.supplies_you_need?.hook || hook + ' mm'}</li>`;
+        html += `<li><strong>Stuffing Needed:</strong> ${data.supplies_you_need?.stuffing_volume || 'Standard'}</li>`;
+        html += `</ul>`;
+        html += `</div>`;
 
         html += `<h3>Round-by-Round Instructions</h3><ul class="pattern-list" id="ovalPatternList">`;
         if (data.pattern && Array.isArray(data.pattern)) {
@@ -538,7 +599,6 @@ async function generateOvalPattern() {
 
         outputDiv.innerHTML = html;
 
-        // --- Interactive Checkbox Strikethrough Effect ---
         const checkboxes = outputDiv.querySelectorAll('.row-checkbox');
         checkboxes.forEach(checkbox => {
             checkbox.addEventListener('change', (e) => {
@@ -555,4 +615,116 @@ async function generateOvalPattern() {
         console.error('Error:', error);
         outputDiv.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
     }
+}
+
+// --- Egg Pattern Generation API Call ---
+async function generateEggPattern() {
+    const unit = document.getElementById('unitSystem').value;
+    const yarn = document.getElementById('yarnWeight').value;
+    const hook = document.getElementById('hookSize').value;
+    const inputMode = document.getElementById('eggInputMode').value;
+    const shellMode = document.getElementById('eggShellMode').value;
+    const stuffingOpt = shellMode === 'Whole shell'
+        ? (document.getElementById('stuffingOpt')?.value || 'yes')
+        : 'no';
+
+    let queryParams = `?yarn_weight=${encodeURIComponent(yarn)}&hook_size_mm=${encodeURIComponent(hook)}&shell_mode=${encodeURIComponent(shellMode)}&stuffing=${encodeURIComponent(stuffingOpt)}`;
+
+    if (inputMode === 'diameter') {
+        const diamVal = document.getElementById('eggDiameter').value;
+        queryParams += unit === 'imperial'
+            ? `&max_diameter_inches=${diamVal}`
+            : `&max_diameter_cm=${diamVal}`;
+    } else {
+        const stitchesVal = document.getElementById('eggStitches').value;
+        queryParams += `&max_diameter_stitches=${stitchesVal}`;
+    }
+
+    const url = `http://127.0.0.1:8000/egg/${queryParams}`;
+
+    const outputDiv = document.getElementById('outputResults');
+    outputDiv.innerHTML = "<p>Generating your custom egg pattern...</p>";
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.detail || "Failed to generate egg pattern.");
+        }
+        const data = await response.json();
+
+        const diamDim = unit === 'imperial' ? data.dimensions?.diameter_inches : data.dimensions?.diameter_cm;
+        const heightDim = unit === 'imperial' ? data.dimensions?.height_inches : data.dimensions?.height_cm;
+        const unitStr = unit === 'imperial' ? 'inches' : 'cm';
+
+        let html = `<h3>Pattern Specifications</h3>`;
+        html += `<div class="metrics-card">`;
+        html += `<p><strong>Shell Mode:</strong> ${data.parameters?.shell_mode || shellMode}</p>`;
+        html += `<p><strong>Total Rounds:</strong> ${data.total_rounds || 'N/A'}</p>`;
+        html += `<p><strong>Finished Max Diameter:</strong> ~${diamDim || 'N/A'} ${unitStr} (${data.parameters?.max_diameter_stitches || 'N/A'} sts)</p>`;
+        html += `<p><strong>Calculated Height:</strong> ~${heightDim || 'N/A'} ${unitStr}</p>`;
+        html += `<p><strong>Supplies You Need:</strong></p>`;
+        html += `<ul class="supplies-list">`;
+        html += `<li><strong>Estimated Yarn:</strong> ${data.supplies_you_need?.estimated_yarn || 'N/A'}</li>`;
+        html += `<li><strong>Hook:</strong> ${data.supplies_you_need?.hook || hook + ' mm'}</li>`;
+        if (shellMode === 'Whole shell') {
+            html += `<li><strong>Stuffing Needed:</strong> ${data.supplies_you_need?.stuffing_volume || 'Standard'}</li>`;
+        }
+        html += `</ul>`;
+        html += `</div>`;
+
+        html += `<h3>Round-by-Round Instructions</h3>`;
+
+        if (data.pattern && Array.isArray(data.pattern)) {
+            if (shellMode === 'Split in half') {
+                const topSteps = data.pattern.filter(s => s.phase && s.phase.startsWith('top_half'));
+                const bottomSteps = data.pattern.filter(s => s.phase && s.phase.startsWith('bottom_half'));
+
+                html += `<h4>Part 1: Top Half (Pointed Crown)</h4>`;
+                html += renderEggStepList(topSteps, 'eggTopPatternList');
+
+                html += `<h4>Part 2: Bottom Half (Rounded Base)</h4>`;
+                html += renderEggStepList(bottomSteps, 'eggBottomPatternList');
+            } else {
+                html += renderEggStepList(data.pattern, 'eggPatternList');
+            }
+        }
+
+        outputDiv.innerHTML = html;
+
+        const checkboxes = outputDiv.querySelectorAll('.row-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', (e) => {
+                const listItem = e.target.closest('li');
+                if (e.target.checked) {
+                    listItem.classList.add('completed');
+                } else {
+                    listItem.classList.remove('completed');
+                }
+            });
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        outputDiv.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
+    }
+}
+
+function renderEggStepList(steps, listId) {
+    let html = `<ul class="pattern-list" id="${listId}">`;
+    steps.forEach((step, index) => {
+        const instructionText = typeof step === 'string' ? step : step.instruction;
+        const stuffingText = step.stuffing_instruction || '';
+
+        html += `<li data-index="${index}">`;
+        html += `<label class="checkbox-label">`;
+        html += `<input type="checkbox" class="row-checkbox"> `;
+        html += `<span>${instructionText}</span>`;
+        html += `</label>`;
+        if (stuffingText) {
+            html += `<div style="color: #64748b; font-size: 0.9em; margin-top: 2px; margin-left: 24px;">💡 ${stuffingText}</div>`;
+        }
+        html += `</li>`;
+    });
+    html += `</ul>`;
+    return html;
 }
