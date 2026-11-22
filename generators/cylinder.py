@@ -1,7 +1,17 @@
 from enum import Enum
 from fastapi import APIRouter, Query, HTTPException
 import math
-from .sphere import YARN_INCHES_PER_STITCH, YARN_STITCH_HEIGHT_INCHES, YARN_STITCH_WIDTH_INCHES, YarnWeight, YARN_GRAMS_PER_YARD
+from constants import (
+    YarnWeight,
+    StuffingOption,
+    CM_PER_INCH,
+    YARN_INCHES_PER_STITCH,
+    YARN_STITCH_HEIGHT_INCHES,
+    YARN_STITCH_WIDTH_INCHES,
+    YARN_GRAMS_PER_YARD,
+    HOOK_LABEL_MAP,
+    get_hook_label,
+)
 
 router = APIRouter(prefix="/cylinder", tags=["Cylinders"])
 
