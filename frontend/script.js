@@ -640,7 +640,7 @@ async function generateEggPattern() {
         queryParams += `&max_diameter_stitches=${stitchesVal}`;
     }
 
-    const url = `http://127.0.0.1:8000/egg/${queryParams}`;
+    const url = `${API_BASE_URL}/egg/${queryParams}`;
 
     const outputDiv = document.getElementById('outputResults');
     outputDiv.innerHTML = "<p>Generating your custom egg pattern...</p>";
