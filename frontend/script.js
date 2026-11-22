@@ -1,3 +1,5 @@
+const API_BASE_URL = "https://ashme5280-amigurumi-api.onrender.com";
+
 document.addEventListener('DOMContentLoaded', () => {
     // --- 1. Modal Event Listeners ---
     setupModalTriggers();
@@ -263,7 +265,7 @@ async function generatePattern() {
         queryParams += `&max_stitches=${stitches}`;
     }
 
-    const url = `http://127.0.0.1:8000/sphere/${queryParams}`;
+    const url = `${API_BASE_URL}/sphere/${queryParams}`;
 
     const outputDiv = document.getElementById('outputResults');
     outputDiv.innerHTML = "<p>Generating your custom pattern...</p>";
@@ -364,7 +366,7 @@ async function generateCylinderPattern() {
         queryParams += `&height_rounds=${rows}`;
     }
 
-    const url = `http://127.0.0.1:8000/cylinder/${queryParams}`;
+    const url = `${API_BASE_URL}/cylinder/${queryParams}`;
 
     const outputDiv = document.getElementById('outputResults');
     outputDiv.innerHTML = "<p>Generating your custom cylinder pattern...</p>";
@@ -463,7 +465,7 @@ async function generateConePattern() {
         queryParams += `&height_rounds=${rows}`;
     }
 
-    const url = `http://127.0.0.1:8000/cone/${queryParams}`;
+    const url = `${API_BASE_URL}/cone/${queryParams}`;
 
     const outputDiv = document.getElementById('outputResults');
     outputDiv.innerHTML = "<p>Generating your custom cone pattern...</p>";
@@ -546,7 +548,7 @@ async function generateOvalPattern() {
     let queryParams = `?yarn_weight=${encodeURIComponent(yarn)}&hook_size_mm=${encodeURIComponent(hook)}&stuffing=${isStuffing}`;
     queryParams += unit === 'imperial' ? `&max_length_inches=${lengthVal}&max_height_inches=${heightVal}` : `&max_length_cm=${lengthVal}&max_height_cm=${heightVal}`;
 
-    const url = `http://127.0.0.1:8000/oval/${queryParams}`;
+    const url = `${API_BASE_URL}/oval/${queryParams}`;
 
     const outputDiv = document.getElementById('outputResults');
     outputDiv.innerHTML = "<p>Generating your custom oval pattern...</p>";

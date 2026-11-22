@@ -10,9 +10,10 @@ app = FastAPI(
     version="2.0.0"
 )
 
+# Add CORS middleware to allow requests from your Shopify storefront
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://ashme5280.com", "https://www.ashme5280.com"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
